@@ -9,7 +9,11 @@ public sealed interface Currency {
     <R> R map(MappedFromCurrency<R> mapper);
 
     static Currency create(Unique<UUID> id, String code, String fullName, String sign) {
-        return new Base(id.unique(), code, fullName, sign);
+        return Currency.from(id.unique(), code, fullName, sign);
+    }
+
+    static Currency from(UUID id, String code, String fullName, String sign) {
+        return new Base(id, code, fullName, sign);
     }
 
     final class Base implements Currency {
