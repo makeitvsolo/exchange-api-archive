@@ -148,76 +148,148 @@ public sealed interface Exchange {
         }
     }
 
-    final class Cross implements Exchange {
-        private final Exchange first;
-        private final Exchange second;
+    sealed interface Cross extends Exchange {
 
-        Cross(Exchange first, Exchange second) {
-            this.first = first;
-            this.second = second;
-        }
-
-        public static Cross of(Exchange first, Exchange second) {
+        static Cross of(Exchange first, Exchange second) {
             if (first.equals(second)) {
                 throw new WrongExchangeException("Cross exchange can't be with the same exchanges");
             }
 
-            if (!first.base().equals(second.base())) {
-                throw new WrongExchangeException("Cross exchange impossible");
+            if (first.base().equals(second.base())) {
+                return new Left(first, second);
             }
 
-            return new Cross(first, second);
-        }
-
-        @Override
-        public Currency base() {
-            return first.target();
-        }
-
-        @Override
-        public Currency target() {
-            return second.target();
-        }
-
-        @Override
-        public BigDecimal rate() {
-            var firstRate = Reversed.of(first).rate();
-
-            return firstRate.multiply(second.rate());
-        }
-
-        @Override
-        public BigDecimal convert(BigDecimal amount) {
-            return second.convert(rate());
-        }
-
-        @Override
-        public Exchange updated(BigDecimal rate) {
-            return Exchange.from(base(), target(), rate);
-        }
-
-        @Override
-        public <R> R map(MappedFromExchange<R> mapped) {
-            return mapped.from(base(), target(), rate());
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
+            if (first.target().equals(second.target())) {
+                return new Right(first, second);
             }
 
-            if (!(obj instanceof Exchange other)) {
-                return false;
-            }
-
-            return base().equals(other.base())
-                    && target().equals(other.target());
+            throw new WrongExchangeException("Cross exchange impossible");
         }
 
-        @Override
-        public int hashCode() {
-            return first.hashCode() ^ second.hashCode();
+        final class Left implements Cross {
+            private final Exchange first;
+            private final Exchange second;
+
+            Left(Exchange first, Exchange second) {
+                this.first = first;
+                this.second = second;
+            }
+
+            @Override
+            public Currency base() {
+                return first.target();
+            }
+
+            @Override
+            public Currency target() {
+                return second.target();
+            }
+
+            @Override
+            public BigDecimal rate() {
+                var firstRate = Reversed.of(first).rate();
+
+                return firstRate.multiply(second.rate());
+            }
+
+            @Override
+            public BigDecimal convert(BigDecimal amount) {
+                var firstReversed = Reversed.of(first);
+
+                return second.convert(firstReversed.convert(amount));
+            }
+
+            @Override
+            public Exchange updated(BigDecimal rate) {
+                return Exchange.from(base(), target(), rate);
+            }
+
+            @Override
+            public <R> R map(MappedFromExchange<R> mapped) {
+                return mapped.from(base(), target(), rate());
+            }
+
+            @Override
+            public boolean equals(Object obj) {
+                if (this == obj) {
+                    return true;
+                }
+
+                if (!(obj instanceof Exchange other)) {
+                    return false;
+                }
+
+                return base().equals(other.base())
+                               && target().equals(other.target());
+            }
+
+            @Override
+            public int hashCode() {
+                return first.hashCode() ^ second.hashCode();
+            }
+        }
+
+        final class Right implements Cross {
+            private final Exchange first;
+            private final Exchange second;
+
+            Right(Exchange first, Exchange second) {
+                this.first = first;
+                this.second = second;
+            }
+
+            @Override
+            public Currency base() {
+                return first.base();
+            }
+
+            @Override
+            public Currency target() {
+                return second.base();
+            }
+
+            @Override
+            public BigDecimal rate() {
+                var secondRate = Reversed.of(second).rate();
+
+                return first.rate().multiply(secondRate);
+            }
+
+            @Override
+            public BigDecimal convert(BigDecimal amount) {
+                var secondReversed = Reversed.of(second);
+
+                return secondReversed.convert(first.convert(amount));
+            }
+
+            @Override
+            public Exchange updated(BigDecimal rate) {
+                return Exchange.from(base(), target(), rate);
+            }
+
+            @Override
+            public <R> R map(MappedFromExchange<R> mapped) {
+                return mapped.from(base(), target(), rate());
+            }
+
+            @Override
+            public boolean equals(Object obj) {
+                if (this == obj) {
+                    return true;
+                }
+
+                if (!(obj instanceof Exchange other)) {
+                    return false;
+                }
+
+                return base().equals(other.base())
+                               && target().equals(other.target());
+            }
+
+            @Override
+            public int hashCode() {
+                return first.hashCode() ^ second.hashCode();
+            }
         }
     }
 }
