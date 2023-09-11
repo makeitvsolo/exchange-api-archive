@@ -159,11 +159,11 @@ public sealed interface Exchange {
 
         public static Cross of(Exchange first, Exchange second) {
             if (first.equals(second)) {
-                throw new IllegalStateException();
+                throw new WrongExchangeException("Cross exchange can't be with the same exchanges");
             }
 
             if (!first.base().equals(second.base())) {
-                throw new IllegalStateException();
+                throw new WrongExchangeException("Cross exchange impossible");
             }
 
             return new Cross(first, second);
