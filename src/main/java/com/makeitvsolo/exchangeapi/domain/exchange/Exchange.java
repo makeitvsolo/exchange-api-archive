@@ -12,10 +12,23 @@ public sealed interface Exchange {
     BigDecimal rate();
 
     BigDecimal convert(BigDecimal amount);
+    Exchange updated(BigDecimal rate);
 
     <R> R map(MappedFromExchange<R> mapped);
 
     static Exchange create(Currency base, Currency target, BigDecimal rate) {
+        return Exchange.from(base, target, rate);
+    }
+
+    static Exchange from(Currency base, Currency target, BigDecimal rate) {
+        if (base.equals(target)) {
+            throw new WrongExchangeException("Exchange is only possible with different currencies");
+        }
+
+        if (rate.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new WrongExchangeException("Exchange rate should be `>0`");
+        }
+
         return new Base(base, target, rate);
     }
 
@@ -48,6 +61,11 @@ public sealed interface Exchange {
         @Override
         public BigDecimal convert(BigDecimal amount) {
             return amount.multiply(rate);
+        }
+
+        @Override
+        public Exchange updated(BigDecimal rate) {
+            return Exchange.from(base, target, rate);
         }
 
         @Override
@@ -104,6 +122,11 @@ public sealed interface Exchange {
         @Override
         public BigDecimal convert(BigDecimal amount) {
             return amount.multiply(rate());
+        }
+
+        @Override
+        public Exchange updated(BigDecimal rate) {
+            return Exchange.from(base(), target(), rate);
         }
 
         @Override
@@ -166,6 +189,11 @@ public sealed interface Exchange {
         @Override
         public BigDecimal convert(BigDecimal amount) {
             return second.convert(rate());
+        }
+
+        @Override
+        public Exchange updated(BigDecimal rate) {
+            return Exchange.from(base(), target(), rate);
         }
 
         @Override
