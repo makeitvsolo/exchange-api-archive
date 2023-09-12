@@ -8,6 +8,7 @@ import com.makeitvsolo.exchangeapi.domain.mapping.MappedFromExchange;
 import com.makeitvsolo.exchangeapi.service.dto.currency.CurrencyDto;
 import com.makeitvsolo.exchangeapi.service.dto.exchange.*;
 import com.makeitvsolo.exchangeapi.service.exception.currency.CurrencyNotFoundException;
+import com.makeitvsolo.exchangeapi.service.exception.exchange.ExchangeAlreadyExistsException;
 import com.makeitvsolo.exchangeapi.service.exception.exchange.ExchangeNotFoundException;
 import org.junit.jupiter.api.*;
 import org.mockito.Mock;
@@ -50,6 +51,8 @@ public class ExchangeServiceTests {
     public void savesExchangeAfterCreation() {
         var payload = new CreateExchangeDto("USD", "CAD", BigDecimal.ONE);
 
+        Mockito.when(exchangeRepository.fetchByCode("USD", "CAD"))
+                       .thenReturn(Optional.empty());
         Mockito.when(currencyRepository.fetchByCode("USD"))
                 .thenReturn(Optional.of(usd));
         Mockito.when(currencyRepository.fetchByCode("CAD"))
@@ -60,6 +63,17 @@ public class ExchangeServiceTests {
         Mockito.verify(exchangeRepository).save(
                 Exchange.create(usd, cad, BigDecimal.ONE)
         );
+    }
+
+    @Test
+    @DisplayName("or throws when exchange already exists")
+    public void orThrowsWhenExchangeAlreadyExists() {
+        var payload = new CreateExchangeDto("USD", "CAD", BigDecimal.ONE);
+
+        Mockito.when(exchangeRepository.fetchByCode("USD", "CAD"))
+                .thenReturn(Optional.of(Exchange.from(usd, cad, BigDecimal.ONE)));
+
+        Assertions.assertThrows(ExchangeAlreadyExistsException.class, () -> service.create(payload));
     }
 
     @Test
