@@ -47,12 +47,15 @@ public class CurrencyServiceTests {
     @Test
     @DisplayName("saves currency after creation")
     public void savesCurrencyAfterCreation() {
+        var usdDto = new CurrencyDto(currencyId.unique(), "USD", "United States Dollar", "$");
+
         var payload = new CreateCurrencyDto("USD", "United States Dollar", "$");
         Mockito.when(repository.fetchByCode("USD"))
                        .thenReturn(Optional.empty());
+        Mockito.when(mapper.from(usdDto.id(), usdDto.code(), usdDto.fullName(), usdDto.sign()))
+                       .thenReturn(usdDto);
 
-        service.create(payload);
-
+        Assertions.assertEquals(usdDto, service.create(payload));
         Mockito.verify(repository)
                 .save(Currency.create(currencyId, payload.code(), payload.fullName(), payload.sign()));
     }
