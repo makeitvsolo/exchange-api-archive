@@ -49,6 +49,12 @@ public class ExchangeServiceTests {
     @Test
     @DisplayName("saves exchange after creation")
     public void savesExchangeAfterCreation() {
+        var usdToCadDto = new ExchangeDto(
+                new CurrencyDto(UUID.randomUUID(), "USD", "United States Dollar", "$"),
+                new CurrencyDto(UUID.randomUUID(), "CAD", "Canadian Dollar", "C$"),
+                BigDecimal.ONE
+        );
+
         var payload = new CreateExchangeDto("USD", "CAD", BigDecimal.ONE);
 
         Mockito.when(exchangeRepository.fetchByCode("USD", "CAD"))
@@ -57,9 +63,11 @@ public class ExchangeServiceTests {
                 .thenReturn(Optional.of(usd));
         Mockito.when(currencyRepository.fetchByCode("CAD"))
                 .thenReturn(Optional.of(cad));
+        Mockito.when(mapper.from(usd, cad, BigDecimal.ONE))
+                       .thenReturn(usdToCadDto);
 
-        service.create(payload);
 
+        Assertions.assertEquals(usdToCadDto, service.create(payload));
         Mockito.verify(exchangeRepository).save(
                 Exchange.create(usd, cad, BigDecimal.ONE)
         );
