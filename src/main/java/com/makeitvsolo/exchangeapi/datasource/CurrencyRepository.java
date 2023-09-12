@@ -1,4 +1,4 @@
-package com.makeitvsolo.exchangeapi.datasource.currency;
+package com.makeitvsolo.exchangeapi.datasource;
 
 import com.makeitvsolo.exchangeapi.domain.Currency;
 

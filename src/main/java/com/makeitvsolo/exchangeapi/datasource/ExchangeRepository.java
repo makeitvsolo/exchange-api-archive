@@ -1,4 +1,4 @@
-package com.makeitvsolo.exchangeapi.datasource.exchange;
+package com.makeitvsolo.exchangeapi.datasource;
 
 import com.makeitvsolo.exchangeapi.domain.Exchange;
 

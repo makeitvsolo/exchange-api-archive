@@ -1,7 +1,7 @@
 package com.makeitvsolo.exchangeapi.service.exchange;
 
-import com.makeitvsolo.exchangeapi.datasource.currency.CurrencyRepository;
-import com.makeitvsolo.exchangeapi.datasource.exchange.ExchangeRepository;
+import com.makeitvsolo.exchangeapi.datasource.CurrencyRepository;
+import com.makeitvsolo.exchangeapi.datasource.ExchangeRepository;
 import com.makeitvsolo.exchangeapi.domain.Currency;
 import com.makeitvsolo.exchangeapi.domain.Exchange;
 import com.makeitvsolo.exchangeapi.domain.mapping.MappedFromExchange;
