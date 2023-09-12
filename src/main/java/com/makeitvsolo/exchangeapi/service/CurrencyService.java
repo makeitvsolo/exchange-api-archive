@@ -25,7 +25,7 @@ public final class CurrencyService {
         this.mapper = mapper;
     }
 
-    public void create(CreateCurrencyDto payload) {
+    public CurrencyDto create(CreateCurrencyDto payload) {
         if (repository.fetchByCode(payload.code()).isPresent()) {
             throw new CurrencyAlreadyExistsException(payload.code());
         }
@@ -33,6 +33,8 @@ public final class CurrencyService {
         var currency = Currency.create(currencyId, payload.code(), payload.fullName(), payload.sign());
 
         repository.save(currency);
+
+        return currency.map(mapper);
     }
 
     public CurrencyDto byCode(String code) {
