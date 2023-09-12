@@ -1,4 +1,4 @@
-package com.makeitvsolo.exchangeapi.domain.currency;
+package com.makeitvsolo.exchangeapi.domain;
 
 import org.junit.jupiter.api.DisplayName;
 
