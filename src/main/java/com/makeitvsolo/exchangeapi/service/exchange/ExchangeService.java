@@ -41,7 +41,7 @@ public final class ExchangeService {
         var exchange = exchangeRepository.fetchByCode(payload.base(), payload.target())
                                .orElseThrow(() -> new ExchangeNotFoundException(payload.base(), payload.target()));
 
-        exchangeRepository.save(exchange.updated(payload.rate()));
+        exchangeRepository.update(exchange.updated(payload.rate()));
     }
 
     public ExchangeDto byCode(ExchangeCodeDto code) {
