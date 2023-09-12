@@ -7,6 +7,7 @@ import com.makeitvsolo.exchangeapi.domain.mapping.MappedFromCurrency;
 import com.makeitvsolo.exchangeapi.service.dto.currency.CreateCurrencyDto;
 import com.makeitvsolo.exchangeapi.service.dto.currency.CurrencyDto;
 import com.makeitvsolo.exchangeapi.service.dto.currency.CurrencyListDto;
+import com.makeitvsolo.exchangeapi.service.exception.currency.CurrencyAlreadyExistsException;
 import com.makeitvsolo.exchangeapi.service.exception.currency.CurrencyNotFoundException;
 
 import java.util.UUID;
@@ -25,6 +26,10 @@ public final class CurrencyService {
     }
 
     public void create(CreateCurrencyDto payload) {
+        if (repository.fetchByCode(payload.code()).isPresent()) {
+            throw new CurrencyAlreadyExistsException(payload.code());
+        }
+
         var currency = Currency.create(currencyId, payload.code(), payload.fullName(), payload.sign());
 
         repository.save(currency);
