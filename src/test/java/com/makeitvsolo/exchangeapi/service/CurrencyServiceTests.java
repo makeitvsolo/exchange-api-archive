@@ -7,6 +7,7 @@ import com.makeitvsolo.exchangeapi.domain.mapping.MappedFromCurrency;
 import com.makeitvsolo.exchangeapi.service.dto.currency.CreateCurrencyDto;
 import com.makeitvsolo.exchangeapi.service.dto.currency.CurrencyDto;
 import com.makeitvsolo.exchangeapi.service.dto.currency.CurrencyListDto;
+import com.makeitvsolo.exchangeapi.service.exception.currency.CurrencyAlreadyExistsException;
 import com.makeitvsolo.exchangeapi.service.exception.currency.CurrencyNotFoundException;
 import org.junit.jupiter.api.*;
 import org.mockito.Mock;
@@ -47,11 +48,27 @@ public class CurrencyServiceTests {
     @DisplayName("saves currency after creation")
     public void savesCurrencyAfterCreation() {
         var payload = new CreateCurrencyDto("USD", "United States Dollar", "$");
+        Mockito.when(repository.fetchByCode("USD"))
+                       .thenReturn(Optional.empty());
 
         service.create(payload);
 
         Mockito.verify(repository)
                 .save(Currency.create(currencyId, payload.code(), payload.fullName(), payload.sign()));
+    }
+
+    @Test
+    @DisplayName("or throws when currency already exists")
+    public void orThrowsWhenCurrencyAlreadyExists() {
+        var payload = new CreateCurrencyDto("USD", "United States Dollar", "$");
+        Mockito.when(repository.fetchByCode("USD"))
+                .thenReturn(
+                        Optional.of(
+                                Currency.from(UUID.randomUUID(), "USD", "United States Dollar", "$")
+                        )
+                );
+
+        Assertions.assertThrows(CurrencyAlreadyExistsException.class, () -> service.create(payload));
     }
 
     @Test
