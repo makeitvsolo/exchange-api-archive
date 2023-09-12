@@ -1,4 +1,4 @@
-package com.makeitvsolo.exchangeapi.service.exchange.exception;
+package com.makeitvsolo.exchangeapi.service.exception.exchange;
 
 import com.makeitvsolo.exchangeapi.core.exception.ExchangeApiException;
 

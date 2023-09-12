@@ -1,4 +1,4 @@
-package com.makeitvsolo.exchangeapi.service.currency.exception;
+package com.makeitvsolo.exchangeapi.service.exception.currency;
 
 import com.makeitvsolo.exchangeapi.core.exception.ExchangeApiException;
 

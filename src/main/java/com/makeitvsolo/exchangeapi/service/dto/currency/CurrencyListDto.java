@@ -1,4 +1,4 @@
-package com.makeitvsolo.exchangeapi.service.currency.dto;
+package com.makeitvsolo.exchangeapi.service.dto.currency;
 
 import java.util.List;
 

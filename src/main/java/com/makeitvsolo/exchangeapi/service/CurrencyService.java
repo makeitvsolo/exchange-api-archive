@@ -1,13 +1,13 @@
-package com.makeitvsolo.exchangeapi.service.currency;
+package com.makeitvsolo.exchangeapi.service;
 
 import com.makeitvsolo.exchangeapi.core.unique.Unique;
 import com.makeitvsolo.exchangeapi.datasource.CurrencyRepository;
 import com.makeitvsolo.exchangeapi.domain.Currency;
 import com.makeitvsolo.exchangeapi.domain.mapping.MappedFromCurrency;
-import com.makeitvsolo.exchangeapi.service.currency.dto.CreateCurrencyDto;
-import com.makeitvsolo.exchangeapi.service.currency.dto.CurrencyDto;
-import com.makeitvsolo.exchangeapi.service.currency.dto.CurrencyListDto;
-import com.makeitvsolo.exchangeapi.service.currency.exception.CurrencyNotFoundException;
+import com.makeitvsolo.exchangeapi.service.dto.currency.CreateCurrencyDto;
+import com.makeitvsolo.exchangeapi.service.dto.currency.CurrencyDto;
+import com.makeitvsolo.exchangeapi.service.dto.currency.CurrencyListDto;
+import com.makeitvsolo.exchangeapi.service.exception.currency.CurrencyNotFoundException;
 
 import java.util.UUID;
 

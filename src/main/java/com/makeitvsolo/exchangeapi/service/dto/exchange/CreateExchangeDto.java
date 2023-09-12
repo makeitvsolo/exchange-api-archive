@@ -1,4 +1,4 @@
-package com.makeitvsolo.exchangeapi.service.exchange.dto;
+package com.makeitvsolo.exchangeapi.service.dto.exchange;
 
 import java.math.BigDecimal;
 
