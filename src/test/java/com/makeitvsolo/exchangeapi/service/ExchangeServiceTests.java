@@ -1,11 +1,10 @@
-package com.makeitvsolo.exchangeapi.service.exchange;
+package com.makeitvsolo.exchangeapi.service;
 
 import com.makeitvsolo.exchangeapi.datasource.CurrencyRepository;
 import com.makeitvsolo.exchangeapi.datasource.ExchangeRepository;
 import com.makeitvsolo.exchangeapi.domain.Currency;
 import com.makeitvsolo.exchangeapi.domain.Exchange;
 import com.makeitvsolo.exchangeapi.domain.mapping.MappedFromExchange;
-import com.makeitvsolo.exchangeapi.service.ExchangeService;
 import com.makeitvsolo.exchangeapi.service.dto.currency.CurrencyDto;
 import com.makeitvsolo.exchangeapi.service.dto.exchange.*;
 import com.makeitvsolo.exchangeapi.service.exception.currency.CurrencyNotFoundException;

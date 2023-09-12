@@ -1,10 +1,9 @@
-package com.makeitvsolo.exchangeapi.service.currency;
+package com.makeitvsolo.exchangeapi.service;
 
 import com.makeitvsolo.exchangeapi.core.unique.Unique;
 import com.makeitvsolo.exchangeapi.datasource.CurrencyRepository;
 import com.makeitvsolo.exchangeapi.domain.Currency;
 import com.makeitvsolo.exchangeapi.domain.mapping.MappedFromCurrency;
-import com.makeitvsolo.exchangeapi.service.CurrencyService;
 import com.makeitvsolo.exchangeapi.service.dto.currency.CreateCurrencyDto;
 import com.makeitvsolo.exchangeapi.service.dto.currency.CurrencyDto;
 import com.makeitvsolo.exchangeapi.service.dto.currency.CurrencyListDto;
