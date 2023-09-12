@@ -1,7 +1,7 @@
-package com.makeitvsolo.exchangeapi.domain.exchange;
+package com.makeitvsolo.exchangeapi.domain.mapping;
 
 import com.makeitvsolo.exchangeapi.core.mapping.Mapper;
-import com.makeitvsolo.exchangeapi.domain.currency.Currency;
+import com.makeitvsolo.exchangeapi.domain.Currency;
 
 import java.math.BigDecimal;
 

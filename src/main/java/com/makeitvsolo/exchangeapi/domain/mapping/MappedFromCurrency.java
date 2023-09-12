@@ -1,4 +1,4 @@
-package com.makeitvsolo.exchangeapi.domain.currency;
+package com.makeitvsolo.exchangeapi.domain.mapping;
 
 import com.makeitvsolo.exchangeapi.core.mapping.Mapper;
 

@@ -1,4 +1,4 @@
-package com.makeitvsolo.exchangeapi.domain.exchange;
+package com.makeitvsolo.exchangeapi.domain.exception;
 
 import com.makeitvsolo.exchangeapi.core.exception.ExchangeApiException;
 

@@ -1,6 +1,6 @@
 package com.makeitvsolo.exchangeapi.datasource.currency;
 
-import com.makeitvsolo.exchangeapi.domain.currency.Currency;
+import com.makeitvsolo.exchangeapi.domain.Currency;
 
 import java.util.List;
 import java.util.Optional;

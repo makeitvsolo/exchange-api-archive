@@ -1,6 +1,7 @@
-package com.makeitvsolo.exchangeapi.domain.currency;
+package com.makeitvsolo.exchangeapi.domain;
 
 import com.makeitvsolo.exchangeapi.core.unique.Unique;
+import com.makeitvsolo.exchangeapi.domain.mapping.MappedFromCurrency;
 
 import java.util.UUID;
 

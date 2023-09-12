@@ -1,6 +1,8 @@
 package com.makeitvsolo.exchangeapi.domain.exchange;
 
-import com.makeitvsolo.exchangeapi.domain.currency.Currency;
+import com.makeitvsolo.exchangeapi.domain.Currency;
+import com.makeitvsolo.exchangeapi.domain.Exchange;
+import com.makeitvsolo.exchangeapi.domain.exception.WrongExchangeException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
