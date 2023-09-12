@@ -24,7 +24,7 @@ public final class ExchangeService {
         this.mapper = mapper;
     }
 
-    public void create(CreateExchangeDto payload) {
+    public ExchangeDto create(CreateExchangeDto payload) {
         if (exchangeRepository.fetchByCode(payload.base(), payload.target()).isPresent()) {
             throw new ExchangeAlreadyExistsException(payload.base(), payload.target());
         }
@@ -40,13 +40,19 @@ public final class ExchangeService {
         );
 
         exchangeRepository.save(exchange);
+
+        return exchange.map(mapper);
     }
 
-    public void update(UpdateExchangeDto payload) {
+    public ExchangeDto update(UpdateExchangeDto payload) {
         var exchange = exchangeRepository.fetchByCode(payload.base(), payload.target())
                                .orElseThrow(() -> new ExchangeNotFoundException(payload.base(), payload.target()));
 
-        exchangeRepository.update(exchange.updated(payload.rate()));
+        var updatedExchange = exchange.updated(payload.rate());
+
+        exchangeRepository.update(updatedExchange);
+
+        return updatedExchange.map(mapper);
     }
 
     public ExchangeDto byCode(ExchangeCodeDto code) {
