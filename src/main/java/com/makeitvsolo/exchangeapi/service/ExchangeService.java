@@ -6,6 +6,7 @@ import com.makeitvsolo.exchangeapi.domain.Exchange;
 import com.makeitvsolo.exchangeapi.domain.mapping.MappedFromExchange;
 import com.makeitvsolo.exchangeapi.service.dto.exchange.*;
 import com.makeitvsolo.exchangeapi.service.exception.currency.CurrencyNotFoundException;
+import com.makeitvsolo.exchangeapi.service.exception.exchange.ExchangeAlreadyExistsException;
 import com.makeitvsolo.exchangeapi.service.exception.exchange.ExchangeNotFoundException;
 
 public final class ExchangeService {
@@ -24,6 +25,10 @@ public final class ExchangeService {
     }
 
     public void create(CreateExchangeDto payload) {
+        if (exchangeRepository.fetchByCode(payload.base(), payload.target()).isPresent()) {
+            throw new ExchangeAlreadyExistsException(payload.base(), payload.target());
+        }
+
         var exchange = Exchange.create(
                 currencyRepository.fetchByCode(payload.base())
                         .orElseThrow(() -> new CurrencyNotFoundException(payload.base())),
