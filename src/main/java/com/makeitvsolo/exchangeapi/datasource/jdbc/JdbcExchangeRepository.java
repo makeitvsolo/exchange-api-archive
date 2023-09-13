@@ -10,6 +10,7 @@ import com.makeitvsolo.exchangeapi.domain.mapping.MappedFromExchange;
 import org.javatuples.Pair;
 
 import javax.sql.DataSource;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -186,23 +187,7 @@ public final class JdbcExchangeRepository implements ExchangeRepository {
             var cursor = statement.getResultSet();
 
             if (cursor.next()) {
-                return Optional.of(Exchange.from(
-                        Currency.from(
-                                UUID.fromString(cursor.getString("base_id")),
-                                cursor.getString("base_code"),
-                                cursor.getString("base_full_name"),
-                                cursor.getString("base_sign")
-                        ),
-
-                        Currency.from(
-                                UUID.fromString(cursor.getString("target_id")),
-                                cursor.getString("target_code"),
-                                cursor.getString("target_full_name"),
-                                cursor.getString("target_sign")
-                        ),
-
-                        cursor.getBigDecimal("exchange_rate")
-                ));
+                return Optional.of(nextFrom(cursor));
             }
 
             return Optional.empty();
@@ -222,23 +207,7 @@ public final class JdbcExchangeRepository implements ExchangeRepository {
 
             List<Exchange> exchanges = new ArrayList<>();
             while (cursor.next()) {
-                exchanges.add(Exchange.from(
-                        Currency.from(
-                                UUID.fromString(cursor.getString("base_id")),
-                                cursor.getString("base_code"),
-                                cursor.getString("base_full_name"),
-                                cursor.getString("base_sign")
-                        ),
-
-                        Currency.from(
-                                UUID.fromString(cursor.getString("target_id")),
-                                cursor.getString("target_code"),
-                                cursor.getString("target_full_name"),
-                                cursor.getString("target_sign")
-                        ),
-
-                        cursor.getBigDecimal("exchange_rate")
-                ));
+                exchanges.add(nextFrom(cursor));
             }
 
             return exchanges;
@@ -262,48 +231,32 @@ public final class JdbcExchangeRepository implements ExchangeRepository {
             var cursor = statement.getResultSet();
 
             if (cursor.next()) {
-                return Optional.of(new Pair<>(
-                        Exchange.from(
-                                Currency.from(
-                                        UUID.fromString(cursor.getString("base_id")),
-                                        cursor.getString("base_code"),
-                                        cursor.getString("base_full_name"),
-                                        cursor.getString("base_sign")
-                                ),
-
-                                Currency.from(
-                                        UUID.fromString(cursor.getString("target_id")),
-                                        cursor.getString("target_code"),
-                                        cursor.getString("target_full_name"),
-                                        cursor.getString("target_sign")
-                                ),
-
-                                cursor.getBigDecimal("exchange_rate")
-                        ),
-
-                        Exchange.from(
-                                Currency.from(
-                                        UUID.fromString(cursor.getString("base_id")),
-                                        cursor.getString("base_code"),
-                                        cursor.getString("base_full_name"),
-                                        cursor.getString("base_sign")
-                                ),
-
-                                Currency.from(
-                                        UUID.fromString(cursor.getString("target_id")),
-                                        cursor.getString("target_code"),
-                                        cursor.getString("target_full_name"),
-                                        cursor.getString("target_sign")
-                                ),
-
-                                cursor.getBigDecimal("exchange_rate")
-                        )
-                ));
+                return Optional.of(new Pair<>(nextFrom(cursor), nextFrom(cursor)));
             }
 
             return Optional.empty();
         } catch (SQLException e) {
             throw new JdbcRepositoryException(e);
         }
+    }
+
+    private Exchange nextFrom(ResultSet cursor) throws SQLException {
+        return Exchange.from(
+                Currency.from(
+                        UUID.fromString(cursor.getString("base_id")),
+                        cursor.getString("base_code"),
+                        cursor.getString("base_full_name"),
+                        cursor.getString("base_sign")
+                ),
+
+                Currency.from(
+                        UUID.fromString(cursor.getString("target_id")),
+                        cursor.getString("target_code"),
+                        cursor.getString("target_full_name"),
+                        cursor.getString("target_sign")
+                ),
+
+                cursor.getBigDecimal("exchange_rate")
+        );
     }
 }
