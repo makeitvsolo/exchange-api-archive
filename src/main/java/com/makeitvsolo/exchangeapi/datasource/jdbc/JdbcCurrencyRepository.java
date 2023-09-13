@@ -15,11 +15,11 @@ import java.util.UUID;
 
 public final class JdbcCurrencyRepository implements CurrencyRepository {
     private final DataSource source;
-    private final MappedFromCurrency<InsertCurrencyParameters> mapper;
+    private final MappedFromCurrency<InsertCurrencyParameters> insertParams;
 
-    public JdbcCurrencyRepository(DataSource source, MappedFromCurrency<InsertCurrencyParameters> mapper) {
+    public JdbcCurrencyRepository(DataSource source, MappedFromCurrency<InsertCurrencyParameters> insertParams) {
         this.source = source;
-        this.mapper = mapper;
+        this.insertParams = insertParams;
     }
 
     private static class Query {
@@ -48,11 +48,11 @@ public final class JdbcCurrencyRepository implements CurrencyRepository {
         ) {
             connection.setAutoCommit(false);
 
-            var insertParams = currency.map(mapper);
-            statement.setString(1, insertParams.id());
-            statement.setString(2, insertParams.code());
-            statement.setString(3, insertParams.fullName());
-            statement.setString(4, insertParams.sign());
+            var params = currency.map(insertParams);
+            statement.setString(1, params.id());
+            statement.setString(2, params.code());
+            statement.setString(3, params.fullName());
+            statement.setString(4, params.sign());
 
             statement.execute();
 
