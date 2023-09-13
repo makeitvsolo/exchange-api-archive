@@ -36,6 +36,8 @@ public final class CurrenciesServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
+            resp.setStatus(HttpServletResponse.SC_OK);
+
             String code = req.getParameter("code");
             String fullName = req.getParameter("full_name");
             String sign = req.getParameter("sign");
