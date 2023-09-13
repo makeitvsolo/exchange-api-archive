@@ -1,4 +1,4 @@
-package com.makeitvsolo.exchangeapi.servlet.convert;
+package com.makeitvsolo.exchangeapi.servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.makeitvsolo.exchangeapi.service.ConvertService;

@@ -1,9 +1,9 @@
-package com.makeitvsolo.exchangeapi.servlet.currency;
+package com.makeitvsolo.exchangeapi.servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.makeitvsolo.exchangeapi.service.CurrencyService;
-import com.makeitvsolo.exchangeapi.service.dto.currency.CreateCurrencyDto;
-import com.makeitvsolo.exchangeapi.service.exception.currency.CurrencyAlreadyExistsException;
+import com.makeitvsolo.exchangeapi.service.ExchangeService;
+import com.makeitvsolo.exchangeapi.service.dto.exchange.CreateExchangeDto;
+import com.makeitvsolo.exchangeapi.service.exception.exchange.ExchangeAlreadyExistsException;
 import com.makeitvsolo.exchangeapi.servlet.error.ErrorMessage;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -12,10 +12,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 
-@WebServlet(name = "currencies", urlPatterns = "/currencies")
-public final class CurrenciesServlet extends HttpServlet {
-    private CurrencyService service;
+@WebServlet(name = "exchange rate", urlPatterns = "/exchanges")
+public final class ExchangesServlet extends HttpServlet {
+    private ExchangeService service;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
@@ -23,8 +24,8 @@ public final class CurrenciesServlet extends HttpServlet {
         try {
             resp.setStatus(HttpServletResponse.SC_OK);
 
-            var currencies = service.all();
-            objectMapper.writeValue(resp.getWriter(), currencies);
+            var exchanges = service.all();
+            objectMapper.writeValue(resp.getWriter(), exchanges);
         } catch (Exception e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
@@ -38,15 +39,14 @@ public final class CurrenciesServlet extends HttpServlet {
         try {
             resp.setStatus(HttpServletResponse.SC_OK);
 
-            String code = req.getParameter("code");
-            String fullName = req.getParameter("full_name");
-            String sign = req.getParameter("sign");
+            var base = req.getParameter("base");
+            var target = req.getParameter("target");
+            var rate = BigDecimal.valueOf(Double.parseDouble(req.getParameter("rate")));
 
-            var payload = new CreateCurrencyDto(code, fullName, sign);
-            var currency = service.create(payload);
-
-            objectMapper.writeValue(resp.getWriter(), currency);
-        } catch (CurrencyAlreadyExistsException e) {
+            var payload = new CreateExchangeDto(base, target, rate);
+            var exchange = service.create(payload);
+            objectMapper.writeValue(resp.getWriter(), exchange);
+        } catch (ExchangeAlreadyExistsException e) {
             resp.setStatus(HttpServletResponse.SC_CONFLICT);
 
             var message = new ErrorMessage(e.getMessage());
