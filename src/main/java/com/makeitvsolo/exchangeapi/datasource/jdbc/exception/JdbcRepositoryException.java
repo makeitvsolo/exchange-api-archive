@@ -4,9 +4,9 @@ import com.makeitvsolo.exchangeapi.core.exception.ExchangeApiException;
 
 import java.sql.SQLException;
 
-public final class JdbcCurrencyRepositoryException extends ExchangeApiException {
+public final class JdbcRepositoryException extends ExchangeApiException {
 
-    public JdbcCurrencyRepositoryException(SQLException e) {
+    public JdbcRepositoryException(SQLException e) {
         super(e.getMessage());
     }
 }

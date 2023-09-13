@@ -1,7 +1,7 @@
 package com.makeitvsolo.exchangeapi.datasource.jdbc;
 
 import com.makeitvsolo.exchangeapi.datasource.CurrencyRepository;
-import com.makeitvsolo.exchangeapi.datasource.jdbc.exception.JdbcCurrencyRepositoryException;
+import com.makeitvsolo.exchangeapi.datasource.jdbc.exception.JdbcRepositoryException;
 import com.makeitvsolo.exchangeapi.datasource.jdbc.parameter.InsertCurrencyParameters;
 import com.makeitvsolo.exchangeapi.domain.Currency;
 import com.makeitvsolo.exchangeapi.domain.mapping.MappedFromCurrency;
@@ -58,7 +58,7 @@ public final class JdbcCurrencyRepository implements CurrencyRepository {
 
             connection.commit();
         } catch (SQLException e) {
-            throw new JdbcCurrencyRepositoryException(e);
+            throw new JdbcRepositoryException(e);
         }
     }
 
@@ -83,7 +83,7 @@ public final class JdbcCurrencyRepository implements CurrencyRepository {
 
             return currencies;
         } catch (SQLException e) {
-            throw new JdbcCurrencyRepositoryException(e);
+            throw new JdbcRepositoryException(e);
         }
     }
 
@@ -109,7 +109,7 @@ public final class JdbcCurrencyRepository implements CurrencyRepository {
 
             return Optional.empty();
         } catch (SQLException e) {
-            throw new JdbcCurrencyRepositoryException(e);
+            throw new JdbcRepositoryException(e);
         }
     }
 }
