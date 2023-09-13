@@ -7,6 +7,7 @@ import com.makeitvsolo.exchangeapi.domain.Currency;
 import com.makeitvsolo.exchangeapi.domain.mapping.MappedFromCurrency;
 
 import javax.sql.DataSource;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -99,17 +100,21 @@ public final class JdbcCurrencyRepository implements CurrencyRepository {
             var cursor = statement.getResultSet();
 
             if (cursor.next()) {
-                return Optional.of(Currency.from(
-                        UUID.fromString(cursor.getString("id")),
-                        cursor.getString("code"),
-                        cursor.getString("full_name"),
-                        cursor.getString("sign")
-                ));
+                return Optional.of(nextFrom(cursor));
             }
 
             return Optional.empty();
         } catch (SQLException e) {
             throw new JdbcRepositoryException(e);
         }
+    }
+
+    private Currency nextFrom(ResultSet cursor) throws SQLException {
+        return Currency.from(
+                UUID.fromString(cursor.getString("id")),
+                cursor.getString("code"),
+                cursor.getString("full_name"),
+                cursor.getString("sign")
+        );
     }
 }
