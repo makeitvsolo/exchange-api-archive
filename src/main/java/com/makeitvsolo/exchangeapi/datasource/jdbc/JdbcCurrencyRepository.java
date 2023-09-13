@@ -2,7 +2,7 @@ package com.makeitvsolo.exchangeapi.datasource.jdbc;
 
 import com.makeitvsolo.exchangeapi.datasource.CurrencyRepository;
 import com.makeitvsolo.exchangeapi.datasource.jdbc.exception.JdbcRepositoryException;
-import com.makeitvsolo.exchangeapi.datasource.jdbc.parameter.InsertCurrencyParameters;
+import com.makeitvsolo.exchangeapi.datasource.jdbc.parameter.currency.InsertCurrencyParameters;
 import com.makeitvsolo.exchangeapi.domain.Currency;
 import com.makeitvsolo.exchangeapi.domain.mapping.MappedFromCurrency;
 
