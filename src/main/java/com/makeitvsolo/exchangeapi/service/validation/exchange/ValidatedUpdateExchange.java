@@ -19,8 +19,12 @@ public final class ValidatedUpdateExchange implements ValidatedBefore<UpdateExch
         this.rate = rate;
     }
 
-    public static ValidatedUpdateExchange of(String base, String target, BigDecimal rate) {
+    public static ValidatedUpdateExchange from(String base, String target, BigDecimal rate) {
         return new ValidatedUpdateExchange(new ValidatedCode(base), new ValidatedCode(target), rate);
+    }
+
+    public static ValidatedUpdateExchange of(UpdateExchangeDto payload) {
+        return ValidatedUpdateExchange.from(payload.base(), payload.target(), payload.rate());
     }
 
     @Override

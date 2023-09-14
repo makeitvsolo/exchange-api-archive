@@ -19,8 +19,12 @@ public final class ValidatedCreateExchange implements ValidatedBefore<CreateExch
         this.rate = rate;
     }
 
-    public static ValidatedCreateExchange of(String base, String target, BigDecimal rate) {
+    public static ValidatedCreateExchange from(String base, String target, BigDecimal rate) {
         return new ValidatedCreateExchange(new ValidatedCode(base), new ValidatedCode(target), rate);
+    }
+
+    public static ValidatedCreateExchange of(CreateExchangeDto payload) {
+        return ValidatedCreateExchange.from(payload.base(), payload.target(), payload.rate());
     }
 
     @Override

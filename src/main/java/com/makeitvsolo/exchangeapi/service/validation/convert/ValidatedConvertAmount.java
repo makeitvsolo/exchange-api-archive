@@ -17,8 +17,12 @@ public final class ValidatedConvertAmount implements ValidatedBefore<ConvertAmou
         this.rate = rate;
     }
 
-    public static ValidatedConvertAmount of(String base, String target, BigDecimal rate) {
+    public static ValidatedConvertAmount from(String base, String target, BigDecimal rate) {
         return new ValidatedConvertAmount(new ValidatedCode(base), new ValidatedCode(target), rate);
+    }
+
+    public static ValidatedConvertAmount of(ConvertAmountDto payload) {
+        return ValidatedConvertAmount.from(payload.base(), payload.target(), payload.amount());
     }
 
     @Override

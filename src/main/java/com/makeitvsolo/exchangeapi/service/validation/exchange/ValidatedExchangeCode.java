@@ -13,8 +13,12 @@ public final class ValidatedExchangeCode implements ValidatedBefore<ExchangeCode
         this.target = target;
     }
 
-    public static ValidatedExchangeCode of(String base, String target) {
+    public static ValidatedExchangeCode from(String base, String target) {
         return new ValidatedExchangeCode(new ValidatedCode(base), new ValidatedCode(target));
+    }
+
+    public static ValidatedExchangeCode of(ExchangeCodeDto code) {
+        return ValidatedExchangeCode.from(code.base(), code.target());
     }
 
     @Override

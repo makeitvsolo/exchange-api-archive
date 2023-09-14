@@ -16,13 +16,16 @@ public final class ValidatedCreateCurrency implements ValidatedBefore<CreateCurr
         this.sign = sign;
     }
 
-
-    public static ValidatedCreateCurrency of(String code, String fullName, String sign) {
+    public static ValidatedCreateCurrency from(String code, String fullName, String sign) {
         return new ValidatedCreateCurrency(
                 new ValidatedCode(code),
                 new ValidatedName(fullName),
                 new ValidatedSign(sign)
         );
+    }
+
+    public static ValidatedCreateCurrency of(CreateCurrencyDto payload) {
+        return ValidatedCreateCurrency.from(payload.code(), payload.fullName(), payload.sign());
     }
 
     @Override
