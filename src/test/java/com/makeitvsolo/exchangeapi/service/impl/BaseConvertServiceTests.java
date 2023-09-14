@@ -1,9 +1,10 @@
-package com.makeitvsolo.exchangeapi.service;
+package com.makeitvsolo.exchangeapi.service.impl;
 
 import com.makeitvsolo.exchangeapi.datasource.ExchangeRepository;
 import com.makeitvsolo.exchangeapi.domain.Currency;
 import com.makeitvsolo.exchangeapi.domain.Exchange;
 import com.makeitvsolo.exchangeapi.domain.mapping.MappedFromCurrency;
+import com.makeitvsolo.exchangeapi.service.ConvertService;
 import com.makeitvsolo.exchangeapi.service.dto.convert.ConvertAmountDto;
 import com.makeitvsolo.exchangeapi.service.dto.convert.ConvertedAmountDto;
 import com.makeitvsolo.exchangeapi.service.dto.currency.CurrencyDto;
@@ -18,8 +19,8 @@ import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
 
-@DisplayName("ConvertService")
-public class ConvertServiceTests {
+@DisplayName("BaseConvertService")
+public class BaseConvertServiceTests {
     private ConvertService service;
     @Mock
     private ExchangeRepository repository;
@@ -50,7 +51,7 @@ public class ConvertServiceTests {
         Mockito.when(mapper.from(cadDto.id(), cadDto.code(), cadDto.fullName(), cadDto.sign()))
                 .thenReturn(cadDto);
 
-        service = new ConvertService(repository, mapper);
+        service = new BaseConvertService(repository, mapper);
     }
 
     @AfterEach

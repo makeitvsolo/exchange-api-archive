@@ -1,9 +1,10 @@
-package com.makeitvsolo.exchangeapi.service;
+package com.makeitvsolo.exchangeapi.service.impl;
 
 import com.makeitvsolo.exchangeapi.core.unique.Unique;
 import com.makeitvsolo.exchangeapi.datasource.CurrencyRepository;
 import com.makeitvsolo.exchangeapi.domain.Currency;
 import com.makeitvsolo.exchangeapi.domain.mapping.MappedFromCurrency;
+import com.makeitvsolo.exchangeapi.service.CurrencyService;
 import com.makeitvsolo.exchangeapi.service.dto.currency.CreateCurrencyDto;
 import com.makeitvsolo.exchangeapi.service.dto.currency.CurrencyDto;
 import com.makeitvsolo.exchangeapi.service.dto.currency.CurrencyListDto;
@@ -18,8 +19,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@DisplayName("CurrencyService")
-public class CurrencyServiceTests {
+@DisplayName("BaseCurrencyService")
+public class BaseCurrencyServiceTests {
     private CurrencyService service;
     @Mock
     private CurrencyRepository repository;
@@ -36,7 +37,7 @@ public class CurrencyServiceTests {
         Mockito.when(currencyId.unique())
                 .thenReturn(UUID.randomUUID());
 
-        service = new CurrencyService(repository, currencyId, mapper);
+        service = new BaseCurrencyService(repository, currencyId, mapper);
     }
 
     @AfterEach

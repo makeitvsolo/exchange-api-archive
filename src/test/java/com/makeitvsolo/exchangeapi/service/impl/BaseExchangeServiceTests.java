@@ -1,10 +1,11 @@
-package com.makeitvsolo.exchangeapi.service;
+package com.makeitvsolo.exchangeapi.service.impl;
 
 import com.makeitvsolo.exchangeapi.datasource.CurrencyRepository;
 import com.makeitvsolo.exchangeapi.datasource.ExchangeRepository;
 import com.makeitvsolo.exchangeapi.domain.Currency;
 import com.makeitvsolo.exchangeapi.domain.Exchange;
 import com.makeitvsolo.exchangeapi.domain.mapping.MappedFromExchange;
+import com.makeitvsolo.exchangeapi.service.ExchangeService;
 import com.makeitvsolo.exchangeapi.service.dto.currency.CurrencyDto;
 import com.makeitvsolo.exchangeapi.service.dto.exchange.*;
 import com.makeitvsolo.exchangeapi.service.exception.currency.CurrencyNotFoundException;
@@ -20,8 +21,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@DisplayName("ExchangeService")
-public class ExchangeServiceTests {
+@DisplayName("BaseExchangeService")
+public class BaseExchangeServiceTests {
     private ExchangeService service;
     private Currency usd = Currency.from(UUID.randomUUID(), "USD", "United States Dollar", "$");
     private Currency cad = Currency.from(UUID.randomUUID(), "CAD", "Canadian Dollar", "C$");
@@ -38,7 +39,7 @@ public class ExchangeServiceTests {
     public void beforeEach() {
         closeable = MockitoAnnotations.openMocks(this);
 
-        service = new ExchangeService(exchangeRepository, currencyRepository, mapper);
+        service = new BaseExchangeService(exchangeRepository, currencyRepository, mapper);
     }
 
     @AfterEach
