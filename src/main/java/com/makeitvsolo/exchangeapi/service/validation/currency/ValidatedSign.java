@@ -12,6 +12,10 @@ public final class ValidatedSign implements ValidatedBefore<String> {
 
     @Override
     public String validated() {
+        if (sign == null) {
+            throw new InvalidPayloadException("Currency sign is null");
+        }
+
         if (sign.isBlank()) {
             throw new InvalidPayloadException("Currency sign should be not empty");
         }

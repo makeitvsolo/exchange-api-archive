@@ -12,6 +12,10 @@ public final class ValidatedCode implements ValidatedBefore<String> {
 
     @Override
     public String validated() {
+        if (code == null) {
+            throw new InvalidPayloadException("Currency code is null");
+        }
+
         if (code.isBlank()) {
             throw new InvalidPayloadException("Currency code should be not empty");
         }

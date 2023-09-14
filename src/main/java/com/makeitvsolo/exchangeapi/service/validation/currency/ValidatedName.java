@@ -12,6 +12,10 @@ public final class ValidatedName implements ValidatedBefore<String> {
 
     @Override
     public String validated() {
+        if (fullName == null) {
+            throw new InvalidPayloadException("Currency name is null");
+        }
+
         if (fullName.isBlank()) {
             throw new InvalidPayloadException("Currency name should be not empty");
         }
