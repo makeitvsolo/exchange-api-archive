@@ -1,9 +1,11 @@
 package com.makeitvsolo.exchangeapi.servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.makeitvsolo.exchangeapi.domain.exception.InvalidCurrencyCodeException;
 import com.makeitvsolo.exchangeapi.service.CurrencyService;
 import com.makeitvsolo.exchangeapi.service.dto.currency.CreateCurrencyDto;
 import com.makeitvsolo.exchangeapi.service.exception.currency.CurrencyAlreadyExistsException;
+import com.makeitvsolo.exchangeapi.service.exception.validation.InvalidPayloadException;
 import com.makeitvsolo.exchangeapi.servlet.error.ErrorMessage;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -46,6 +48,11 @@ public final class CurrenciesServlet extends HttpServlet {
             var currency = service.create(payload);
 
             objectMapper.writeValue(resp.getWriter(), currency);
+        } catch (InvalidPayloadException | InvalidCurrencyCodeException e) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+
+            var message = new ErrorMessage(e.getMessage());
+            objectMapper.writeValue(resp.getWriter(), message);
         } catch (CurrencyAlreadyExistsException e) {
             resp.setStatus(HttpServletResponse.SC_CONFLICT);
 

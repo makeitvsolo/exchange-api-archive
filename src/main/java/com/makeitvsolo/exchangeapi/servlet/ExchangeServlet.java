@@ -1,10 +1,13 @@
 package com.makeitvsolo.exchangeapi.servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.makeitvsolo.exchangeapi.domain.exception.InvalidCurrencyCodeException;
+import com.makeitvsolo.exchangeapi.domain.exception.WrongExchangeException;
 import com.makeitvsolo.exchangeapi.service.ExchangeService;
 import com.makeitvsolo.exchangeapi.service.dto.exchange.ExchangeCodeDto;
 import com.makeitvsolo.exchangeapi.service.dto.exchange.UpdateExchangeDto;
 import com.makeitvsolo.exchangeapi.service.exception.exchange.ExchangeNotFoundException;
+import com.makeitvsolo.exchangeapi.service.exception.validation.InvalidPayloadException;
 import com.makeitvsolo.exchangeapi.servlet.error.ErrorMessage;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -39,6 +42,11 @@ public final class ExchangeServlet extends HttpServlet {
             var payload = new ExchangeCodeDto(path.substring(0, 3), path.substring(3));
             var exchange = service.byCode(payload);
             objectMapper.writeValue(resp.getWriter(), exchange);
+        } catch (InvalidPayloadException | InvalidCurrencyCodeException e) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+
+            var message = new ErrorMessage(e.getMessage());
+            objectMapper.writeValue(resp.getWriter(), message);
         } catch (ExchangeNotFoundException e) {
             resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
 
@@ -66,6 +74,11 @@ public final class ExchangeServlet extends HttpServlet {
             var payload = new UpdateExchangeDto(path.substring(0, 3), path.substring(3), rate);
             var exchange = service.update(payload);
             objectMapper.writeValue(resp.getWriter(), exchange);
+        } catch (InvalidPayloadException | InvalidCurrencyCodeException | WrongExchangeException e) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+
+            var message = new ErrorMessage(e.getMessage());
+            objectMapper.writeValue(resp.getWriter(), message);
         } catch (ExchangeNotFoundException e) {
             resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
 

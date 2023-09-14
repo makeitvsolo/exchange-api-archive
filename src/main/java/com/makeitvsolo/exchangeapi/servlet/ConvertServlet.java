@@ -1,9 +1,11 @@
 package com.makeitvsolo.exchangeapi.servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.makeitvsolo.exchangeapi.domain.exception.InvalidCurrencyCodeException;
 import com.makeitvsolo.exchangeapi.service.ConvertService;
 import com.makeitvsolo.exchangeapi.service.dto.convert.ConvertAmountDto;
 import com.makeitvsolo.exchangeapi.service.exception.exchange.ExchangeNotFoundException;
+import com.makeitvsolo.exchangeapi.service.exception.validation.InvalidPayloadException;
 import com.makeitvsolo.exchangeapi.servlet.error.ErrorMessage;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -31,6 +33,11 @@ public final class ConvertServlet extends HttpServlet {
             var payload = new ConvertAmountDto(base, target, amount);
             var converted = service.convert(payload);
             objectMapper.writeValue(resp.getWriter(), converted);
+        } catch (InvalidPayloadException | InvalidCurrencyCodeException e) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+
+            var message = new ErrorMessage(e.getMessage());
+            objectMapper.writeValue(resp.getWriter(), message);
         } catch (ExchangeNotFoundException e) {
             resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
 

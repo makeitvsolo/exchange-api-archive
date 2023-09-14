@@ -1,8 +1,10 @@
 package com.makeitvsolo.exchangeapi.servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.makeitvsolo.exchangeapi.domain.exception.InvalidCurrencyCodeException;
 import com.makeitvsolo.exchangeapi.service.CurrencyService;
 import com.makeitvsolo.exchangeapi.service.exception.currency.CurrencyNotFoundException;
+import com.makeitvsolo.exchangeapi.service.exception.validation.InvalidPayloadException;
 import com.makeitvsolo.exchangeapi.servlet.error.ErrorMessage;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -26,6 +28,11 @@ public final class CurrencyServlet extends HttpServlet {
 
             var currency = service.byCode(payload);
             objectMapper.writeValue(resp.getWriter(), currency);
+        } catch (InvalidPayloadException | InvalidCurrencyCodeException e) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+
+            var message = new ErrorMessage(e.getMessage());
+            objectMapper.writeValue(resp.getWriter(), message);
         } catch (CurrencyNotFoundException e) {
             resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
 

@@ -1,9 +1,12 @@
 package com.makeitvsolo.exchangeapi.servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.makeitvsolo.exchangeapi.domain.exception.InvalidCurrencyCodeException;
+import com.makeitvsolo.exchangeapi.domain.exception.WrongExchangeException;
 import com.makeitvsolo.exchangeapi.service.ExchangeService;
 import com.makeitvsolo.exchangeapi.service.dto.exchange.CreateExchangeDto;
 import com.makeitvsolo.exchangeapi.service.exception.exchange.ExchangeAlreadyExistsException;
+import com.makeitvsolo.exchangeapi.service.exception.validation.InvalidPayloadException;
 import com.makeitvsolo.exchangeapi.servlet.error.ErrorMessage;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -46,6 +49,11 @@ public final class ExchangesServlet extends HttpServlet {
             var payload = new CreateExchangeDto(base, target, rate);
             var exchange = service.create(payload);
             objectMapper.writeValue(resp.getWriter(), exchange);
+        } catch (InvalidPayloadException | InvalidCurrencyCodeException | WrongExchangeException e) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+
+            var message = new ErrorMessage(e.getMessage());
+            objectMapper.writeValue(resp.getWriter(), message);
         } catch (ExchangeAlreadyExistsException e) {
             resp.setStatus(HttpServletResponse.SC_CONFLICT);
 
