@@ -28,23 +28,42 @@ import com.makeitvsolo.exchangeapi.service.mapping.MappedFromExchangeToDto;
 import com.makeitvsolo.exchangeapi.service.validation.WithValidationConvertService;
 import com.makeitvsolo.exchangeapi.service.validation.WithValidationCurrencyService;
 import com.makeitvsolo.exchangeapi.service.validation.WithValidationExchangeService;
-import org.apache.commons.dbcp2.BasicDataSource;
+import org.postgresql.ds.PGSimpleDataSource;
 
 import javax.sql.DataSource;
+import java.io.IOException;
+import java.util.Properties;
 import java.util.UUID;
 
 public interface ApplicationConfig {
 
     interface Connections {
 
-        final class DBCP {
-            private static final BasicDataSource source = new BasicDataSource();
+        final class Postgres {
+            private static final PGSimpleDataSource source = new PGSimpleDataSource();
 
-            public DBCP() {
+            public Postgres() {
             } static {
-                source.setUrl(System.getenv("DB_URL"));
-                source.setUsername(System.getenv("DB_USERNAME"));
-                source.setPassword(System.getenv("DB_PASSWORD"));
+                String url = System.getenv("DB_URL");
+                String username = System.getenv("DB_USERNAME");
+                String password = System.getenv("DB_PASSWORD");
+
+                if (url == null || username == null || password == null) {
+                    try (var stream = Postgres.class.getResourceAsStream("/postgres.properties")) {
+                        var properties = new Properties();
+
+                        properties.load(stream);
+                        url = properties.getProperty("postgres.url");
+                        username = properties.getProperty("postgres.username");
+                        password = properties.getProperty("postgres.password");
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+
+                source.setURL(url);
+                source.setUser(username);
+                source.setPassword(password);
             }
 
             public static DataSource source() {
@@ -100,7 +119,7 @@ public interface ApplicationConfig {
 
             public static CurrencyRepository configured() {
                 return new JdbcCurrencyRepository(
-                        Connections.DBCP.source(),
+                        Connections.Postgres.source(),
                         Mappers.FromCurrency.ToInsertParameters.configured()
                 );
             }
@@ -110,7 +129,7 @@ public interface ApplicationConfig {
 
             public static ExchangeRepository configured() {
                 return new JdbcExchangeRepository(
-                        Connections.DBCP.source(),
+                        Connections.Postgres.source(),
                         Mappers.FromExchange.ToInsertParameters.configured(),
                         Mappers.FromExchange.ToUpdateParameters.configured()
                 );
