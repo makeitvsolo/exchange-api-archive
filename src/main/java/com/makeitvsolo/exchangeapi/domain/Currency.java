@@ -1,6 +1,7 @@
 package com.makeitvsolo.exchangeapi.domain;
 
 import com.makeitvsolo.exchangeapi.core.unique.Unique;
+import com.makeitvsolo.exchangeapi.domain.exception.InvalidCurrencyCodeException;
 import com.makeitvsolo.exchangeapi.domain.mapping.MappedFromCurrency;
 
 import java.util.UUID;
@@ -14,6 +15,13 @@ public sealed interface Currency {
     }
 
     static Currency from(UUID id, String code, String fullName, String sign) {
+        java.util.Currency.getAvailableCurrencies()
+                .stream()
+                .map(java.util.Currency::getCurrencyCode)
+                .filter(correct -> correct.equals(code))
+                .findFirst()
+                .orElseThrow(() -> new InvalidCurrencyCodeException(code));
+
         return new Base(id, code, fullName, sign);
     }
 
