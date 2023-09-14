@@ -16,9 +16,4 @@ public record ConvertedAmountDto(
         BigDecimal amount,
         BigDecimal convertedAmount
 ) {
-
-    public ConvertedAmountDto {
-        amount = amount.setScale(2, RoundingMode.HALF_EVEN);
-        convertedAmount = amount.setScale(2, RoundingMode.HALF_EVEN);
-    }
 }
