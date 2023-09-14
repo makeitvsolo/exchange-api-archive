@@ -4,8 +4,13 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @JsonSerialize
 @JsonDeserialize
 public record CreateExchangeDto(String base, String target, BigDecimal rate) {
+
+    public CreateExchangeDto {
+        rate = rate.setScale(4, RoundingMode.HALF_EVEN);
+    }
 }
