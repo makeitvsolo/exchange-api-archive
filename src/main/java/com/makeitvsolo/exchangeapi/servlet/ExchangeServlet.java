@@ -9,6 +9,7 @@ import com.makeitvsolo.exchangeapi.service.dto.exchange.UpdateExchangeDto;
 import com.makeitvsolo.exchangeapi.service.exception.exchange.ExchangeNotFoundException;
 import com.makeitvsolo.exchangeapi.service.exception.validation.InvalidPayloadException;
 import com.makeitvsolo.exchangeapi.servlet.error.ErrorMessage;
+import com.makeitvsolo.exchangeapi.servlet.validation.ValidatedNumber;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -16,7 +17,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 
 @WebServlet(name = "exchange rate", urlPatterns = "/exchange/*")
 public final class ExchangeServlet extends HttpServlet {
@@ -65,13 +65,13 @@ public final class ExchangeServlet extends HttpServlet {
             resp.setStatus(HttpServletResponse.SC_OK);
 
             var path = req.getPathInfo().replaceAll("/", "");
-            var rate = BigDecimal.valueOf(Double.parseDouble(
+            var rate = new ValidatedNumber(
                     req.getReader()
                             .readLine()
                             .replace("rate=", "")
-            ));
+            );
 
-            var payload = new UpdateExchangeDto(path.substring(0, 3), path.substring(3), rate);
+            var payload = new UpdateExchangeDto(path.substring(0, 3), path.substring(3), rate.validated());
             var exchange = service.update(payload);
             objectMapper.writeValue(resp.getWriter(), exchange);
         } catch (InvalidPayloadException | InvalidCurrencyCodeException | WrongExchangeException e) {

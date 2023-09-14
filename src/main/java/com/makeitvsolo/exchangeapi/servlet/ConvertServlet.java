@@ -7,6 +7,7 @@ import com.makeitvsolo.exchangeapi.service.dto.convert.ConvertAmountDto;
 import com.makeitvsolo.exchangeapi.service.exception.exchange.ExchangeNotFoundException;
 import com.makeitvsolo.exchangeapi.service.exception.validation.InvalidPayloadException;
 import com.makeitvsolo.exchangeapi.servlet.error.ErrorMessage;
+import com.makeitvsolo.exchangeapi.servlet.validation.ValidatedNumber;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -14,7 +15,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 
 @WebServlet(name = "convert", urlPatterns = "/convert")
 public final class ConvertServlet extends HttpServlet {
@@ -28,9 +28,9 @@ public final class ConvertServlet extends HttpServlet {
 
             var base = req.getParameter("from");
             var target = req.getParameter("to");
-            var amount = BigDecimal.valueOf(Double.parseDouble(req.getParameter("amount")));
+            var amount = new ValidatedNumber(req.getParameter("amount"));
 
-            var payload = new ConvertAmountDto(base, target, amount);
+            var payload = new ConvertAmountDto(base, target, amount.validated());
             var converted = service.convert(payload);
             objectMapper.writeValue(resp.getWriter(), converted);
         } catch (InvalidPayloadException | InvalidCurrencyCodeException e) {

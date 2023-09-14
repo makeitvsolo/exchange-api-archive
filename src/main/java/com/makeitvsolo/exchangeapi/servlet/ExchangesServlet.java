@@ -8,6 +8,7 @@ import com.makeitvsolo.exchangeapi.service.dto.exchange.CreateExchangeDto;
 import com.makeitvsolo.exchangeapi.service.exception.exchange.ExchangeAlreadyExistsException;
 import com.makeitvsolo.exchangeapi.service.exception.validation.InvalidPayloadException;
 import com.makeitvsolo.exchangeapi.servlet.error.ErrorMessage;
+import com.makeitvsolo.exchangeapi.servlet.validation.ValidatedNumber;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -15,7 +16,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 
 @WebServlet(name = "exchange rate", urlPatterns = "/exchanges")
 public final class ExchangesServlet extends HttpServlet {
@@ -44,9 +44,9 @@ public final class ExchangesServlet extends HttpServlet {
 
             var base = req.getParameter("base");
             var target = req.getParameter("target");
-            var rate = BigDecimal.valueOf(Double.parseDouble(req.getParameter("rate")));
+            var rate = new ValidatedNumber(req.getParameter("rate"));
 
-            var payload = new CreateExchangeDto(base, target, rate);
+            var payload = new CreateExchangeDto(base, target, rate.validated());
             var exchange = service.create(payload);
             objectMapper.writeValue(resp.getWriter(), exchange);
         } catch (InvalidPayloadException | InvalidCurrencyCodeException | WrongExchangeException e) {
