@@ -1,12 +1,10 @@
 package com.makeitvsolo.exchangeapi;
 
-import com.makeitvsolo.exchangeapi.core.unique.Unique;
-import com.makeitvsolo.exchangeapi.core.unique.UniqueUUID;
 import com.makeitvsolo.exchangeapi.datasource.CurrencyRepository;
 import com.makeitvsolo.exchangeapi.datasource.ExchangeRepository;
 import com.makeitvsolo.exchangeapi.datasource.jdbc.JdbcCurrencyRepository;
 import com.makeitvsolo.exchangeapi.datasource.jdbc.JdbcExchangeRepository;
-import com.makeitvsolo.exchangeapi.datasource.jdbc.mapping.MappedFromCurrencyToId;
+import com.makeitvsolo.exchangeapi.datasource.jdbc.mapping.MappedFromCurrencyToCode;
 import com.makeitvsolo.exchangeapi.datasource.jdbc.mapping.MappedFromCurrencyToInsert;
 import com.makeitvsolo.exchangeapi.datasource.jdbc.mapping.MappedFromExchangeToInsert;
 import com.makeitvsolo.exchangeapi.datasource.jdbc.mapping.MappedFromExchangeToUpdate;
@@ -33,7 +31,6 @@ import org.postgresql.ds.PGSimpleDataSource;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.util.Properties;
-import java.util.UUID;
 
 public interface ApplicationConfig {
 
@@ -80,7 +77,6 @@ public interface ApplicationConfig {
                 return new WithValidationCurrencyService(
                         new BaseCurrencyService(
                                 Repositories.Currency.configured(),
-                                Uniques.UUID.configured(),
                                 Mappers.FromCurrency.ToDto.configured()
                         )
                 );
@@ -137,16 +133,6 @@ public interface ApplicationConfig {
         }
     }
 
-    interface Uniques {
-
-        final class UUID {
-
-            public static Unique<java.util.UUID> configured() {
-                return new UniqueUUID();
-            }
-        }
-    }
-
     interface Mappers {
 
         interface FromCurrency {
@@ -160,8 +146,8 @@ public interface ApplicationConfig {
 
             final class ToId {
 
-                public static MappedFromCurrency<UUID> configured() {
-                    return new MappedFromCurrencyToId();
+                public static MappedFromCurrency<String> configured() {
+                    return new MappedFromCurrencyToCode();
                 }
             }
 
