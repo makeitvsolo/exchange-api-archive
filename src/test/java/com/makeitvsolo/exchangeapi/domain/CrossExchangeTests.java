@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
-import java.util.UUID;
 
 @DisplayName("CrossExchange")
 public class CrossExchangeTests {
