@@ -55,12 +55,12 @@ public final class JdbcExchangeRepository implements ExchangeRepository {
                     e.rate AS exchange_rate
                 FROM exchanges e
                 INNER JOIN (
-                    SELECT id, code, full_name, sign
+                    SELECT code, full_name, sign
                     FROM currencies
                     WHERE code = ?
                 ) b ON e.base_currency_code = b.code
                 INNER JOIN (
-                    SELECT id, code, full_name, sign
+                    SELECT code, full_name, sign
                     FROM currencies
                     WHERE code = ?
                 ) t ON e.target_currency_code = t.code
@@ -118,7 +118,7 @@ public final class JdbcExchangeRepository implements ExchangeRepository {
                             LIMIT 1
                         )
                     ) a
-                    ORDER BY base_currency_code, base_currency_code
+                    ORDER BY base_currency_code, target_currency_code
                     LIMIT 2
                 ) c
                 INNER JOIN currencies b ON c.base_currency_code = b.code
@@ -214,7 +214,7 @@ public final class JdbcExchangeRepository implements ExchangeRepository {
     public Optional<Pair<Exchange, Exchange>> fetchAnyCrossPair(String base, String target) {
         try (
                 var connection = source.getConnection();
-                var statement = connection.prepareStatement(Query.FetchByCode)
+                var statement = connection.prepareStatement(Query.FetchAnyCrossPair)
         ) {
             statement.setString(1, base);
             statement.setString(2, target);
@@ -225,7 +225,11 @@ public final class JdbcExchangeRepository implements ExchangeRepository {
             var cursor = statement.getResultSet();
 
             if (cursor.next()) {
-                return Optional.of(new Pair<>(nextFrom(cursor), nextFrom(cursor)));
+                var left = nextFrom(cursor);
+                cursor.next();
+                var right = nextFrom(cursor);
+
+                return Optional.of(new Pair<>(left, right));
             }
 
             return Optional.empty();
