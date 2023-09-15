@@ -24,8 +24,8 @@ import java.util.UUID;
 @DisplayName("BaseExchangeService")
 public class BaseExchangeServiceTests {
     private ExchangeService service;
-    private Currency usd = Currency.from(UUID.randomUUID(), "USD", "United States Dollar", "$");
-    private Currency cad = Currency.from(UUID.randomUUID(), "CAD", "Canadian Dollar", "C$");
+    private Currency usd = Currency.from("USD", "United States Dollar", "$");
+    private Currency cad = Currency.from("CAD", "Canadian Dollar", "C$");
     @Mock
     private ExchangeRepository exchangeRepository;
     @Mock
@@ -51,8 +51,8 @@ public class BaseExchangeServiceTests {
     @DisplayName("saves exchange after creation")
     public void savesExchangeAfterCreation() {
         var usdToCadDto = new ExchangeDto(
-                new CurrencyDto(UUID.randomUUID(), "USD", "United States Dollar", "$"),
-                new CurrencyDto(UUID.randomUUID(), "CAD", "Canadian Dollar", "C$"),
+                new CurrencyDto("USD", "United States Dollar", "$"),
+                new CurrencyDto("CAD", "Canadian Dollar", "C$"),
                 BigDecimal.ONE
         );
 
@@ -129,8 +129,8 @@ public class BaseExchangeServiceTests {
         var code = new ExchangeCodeDto("USD", "CAD");
         var exchange = Exchange.from(usd, cad, BigDecimal.ONE);
         var exchangeDto = new ExchangeDto(
-                new CurrencyDto(UUID.randomUUID(), "USD", "United States Dollar", "$"),
-                new CurrencyDto(UUID.randomUUID(), "CAD", "Canadian Dollar", "C$"),
+                new CurrencyDto("USD", "United States Dollar", "$"),
+                new CurrencyDto("CAD", "Canadian Dollar", "C$"),
                 BigDecimal.ONE
         );
 
@@ -158,8 +158,8 @@ public class BaseExchangeServiceTests {
     public void retrievesAllExchanges() {
         var usdToCad = Exchange.from(usd, cad, BigDecimal.ONE);
         var usdToCadDto = new ExchangeDto(
-                new CurrencyDto(UUID.randomUUID(), "USD", "United States Dollar", "$"),
-                new CurrencyDto(UUID.randomUUID(), "CAD", "Canadian Dollar", "C$"),
+                new CurrencyDto("USD", "United States Dollar", "$"),
+                new CurrencyDto("CAD", "Canadian Dollar", "C$"),
                 BigDecimal.ONE
         );
 

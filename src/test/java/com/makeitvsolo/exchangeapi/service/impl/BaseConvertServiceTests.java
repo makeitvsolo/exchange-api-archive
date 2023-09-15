@@ -17,7 +17,6 @@ import org.mockito.MockitoAnnotations;
 
 import java.math.BigDecimal;
 import java.util.Optional;
-import java.util.UUID;
 
 @DisplayName("BaseConvertService")
 public class BaseConvertServiceTests {
@@ -27,8 +26,8 @@ public class BaseConvertServiceTests {
     @Mock
     private MappedFromCurrency<CurrencyDto> mapper;
     private ConvertAmountDto payload = new ConvertAmountDto("USD", "CAD", BigDecimal.ONE);
-    private CurrencyDto usdDto = new CurrencyDto(new UUID(0, 0), "USD", "United States Dollar", "$");
-    private CurrencyDto cadDto = new CurrencyDto(new UUID(0, 1), "CAD", "Canadian Dollar", "C$");
+    private CurrencyDto usdDto = new CurrencyDto("USD", "United States Dollar", "$");
+    private CurrencyDto cadDto = new CurrencyDto("CAD", "Canadian Dollar", "C$");
     private ConvertedAmountDto convertedDto = new ConvertedAmountDto(
             usdDto,
             cadDto,
@@ -36,9 +35,9 @@ public class BaseConvertServiceTests {
             BigDecimal.ONE,
             BigDecimal.ONE
     );
-    private Currency usd = Currency.from(new UUID(0, 0), "USD", "United States Dollar", "$");
-    private Currency cad = Currency.from(new UUID(0, 1), "CAD", "Canadian Dollar", "C$");
-    private Currency jpy = Currency.from(new UUID(0, 2), "JPY", "Japanese Yen", "¥");
+    private Currency usd = Currency.from("USD", "United States Dollar", "$");
+    private Currency cad = Currency.from("CAD", "Canadian Dollar", "C$");
+    private Currency jpy = Currency.from("JPY", "Japanese Yen", "¥");
 
     private AutoCloseable closeable;
 
@@ -46,9 +45,9 @@ public class BaseConvertServiceTests {
     public void beforeEach() {
         closeable = MockitoAnnotations.openMocks(this);
 
-        Mockito.when(mapper.from(usdDto.id(), usdDto.code(), usdDto.fullName(), usdDto.sign()))
+        Mockito.when(mapper.from(usdDto.code(), usdDto.fullName(), usdDto.sign()))
                 .thenReturn(usdDto);
-        Mockito.when(mapper.from(cadDto.id(), cadDto.code(), cadDto.fullName(), cadDto.sign()))
+        Mockito.when(mapper.from(cadDto.code(), cadDto.fullName(), cadDto.sign()))
                 .thenReturn(cadDto);
 
         service = new BaseConvertService(repository, mapper);
