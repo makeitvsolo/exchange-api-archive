@@ -35,4 +35,8 @@
         <servlet-class>com.makeitvsolo.exchangeapi.servlet.ConvertServlet</servlet-class>
     </servlet>
 
+    <filter>
+        <filter-name>encoding</filter-name>
+        <filter-class>com.makeitvsolo.exchangeapi.servlet.filter.EncodingFilter</filter-class>
+    </filter>
 </web-app>

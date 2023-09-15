@@ -5,7 +5,7 @@ import jakarta.servlet.annotation.WebFilter;
 
 import java.io.IOException;
 
-@WebFilter(urlPatterns = "/*")
+@WebFilter(filterName = "encoding", urlPatterns = "/*")
 public final class EncodingFilter implements Filter {
 
     @Override
