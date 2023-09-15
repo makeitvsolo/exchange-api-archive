@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app
+        xmlns = "https://jakarta.ee/xml/ns/jakartaee"
+        xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation = "https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
+        version = "6.0"
+        metadata-complete = "false">
+    <servlet>
+        <servlet-name>hw</servlet-name>
+        <servlet-class>com.makeitvsolo.exchangeapi.servlet.HW</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>currency</servlet-name>
+        <servlet-class>com.makeitvsolo.exchangeapi.servlet.CurrencyServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>currencies</servlet-name>
+        <servlet-class>com.makeitvsolo.exchangeapi.servlet.CurrenciesServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>exchange</servlet-name>
+        <servlet-class>com.makeitvsolo.exchangeapi.servlet.ExchangeServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>exchanges</servlet-name>
+        <servlet-class>com.makeitvsolo.exchangeapi.servlet.ExchangesServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>convert</servlet-name>
+        <servlet-class>com.makeitvsolo.exchangeapi.servlet.ConvertServlet</servlet-class>
+    </servlet>
+
+</web-app>
