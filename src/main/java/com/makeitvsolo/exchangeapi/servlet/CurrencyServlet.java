@@ -1,11 +1,15 @@
 package com.makeitvsolo.exchangeapi.servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.makeitvsolo.exchangeapi.ApplicationConfig;
 import com.makeitvsolo.exchangeapi.domain.exception.InvalidCurrencyCodeException;
 import com.makeitvsolo.exchangeapi.service.CurrencyService;
 import com.makeitvsolo.exchangeapi.service.exception.currency.CurrencyNotFoundException;
 import com.makeitvsolo.exchangeapi.service.exception.validation.InvalidPayloadException;
-import com.makeitvsolo.exchangeapi.servlet.error.ErrorMessage;
+import com.makeitvsolo.exchangeapi.servlet.exception.ParseQueryException;
+import com.makeitvsolo.exchangeapi.servlet.message.ErrorMessage;
+import com.makeitvsolo.exchangeapi.servlet.query.ParseQuery;
+import com.makeitvsolo.exchangeapi.servlet.query.currency.ParseCurrencyCode;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -14,9 +18,10 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-@WebServlet(name = "currency", urlPatterns = "/currency/*")
+@WebServlet(name = "currency", urlPatterns = "/currencies/*")
 public final class CurrencyServlet extends HttpServlet {
-    private CurrencyService service;
+    private final CurrencyService service = ApplicationConfig.Services.Currency.configured();
+    private final ParseQuery<String> query = new ParseCurrencyCode();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
@@ -24,11 +29,11 @@ public final class CurrencyServlet extends HttpServlet {
         try {
             resp.setStatus(HttpServletResponse.SC_OK);
 
-            var payload = req.getPathInfo().replaceAll("/", "");
+            var payload = query.parse(req.getPathInfo().replaceAll("/", ""));
 
             var currency = service.byCode(payload);
             objectMapper.writeValue(resp.getWriter(), currency);
-        } catch (InvalidPayloadException | InvalidCurrencyCodeException e) {
+        } catch (ParseQueryException | InvalidPayloadException | InvalidCurrencyCodeException e) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 
             var message = new ErrorMessage(e.getMessage());
@@ -41,7 +46,7 @@ public final class CurrencyServlet extends HttpServlet {
         } catch (Exception e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
-            var message = new ErrorMessage(e.getMessage());
+            var message = new ErrorMessage("Internal server error");
             objectMapper.writeValue(resp.getWriter(), message);
         }
     }

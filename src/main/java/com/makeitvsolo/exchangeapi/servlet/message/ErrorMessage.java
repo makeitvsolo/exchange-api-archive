@@ -1,4 +1,4 @@
-package com.makeitvsolo.exchangeapi.servlet.error;
+package com.makeitvsolo.exchangeapi.servlet.message;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;

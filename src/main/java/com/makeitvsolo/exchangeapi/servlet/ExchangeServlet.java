@@ -1,6 +1,7 @@
 package com.makeitvsolo.exchangeapi.servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.makeitvsolo.exchangeapi.ApplicationConfig;
 import com.makeitvsolo.exchangeapi.domain.exception.InvalidCurrencyCodeException;
 import com.makeitvsolo.exchangeapi.domain.exception.WrongExchangeException;
 import com.makeitvsolo.exchangeapi.service.ExchangeService;
@@ -8,8 +9,13 @@ import com.makeitvsolo.exchangeapi.service.dto.exchange.ExchangeCodeDto;
 import com.makeitvsolo.exchangeapi.service.dto.exchange.UpdateExchangeDto;
 import com.makeitvsolo.exchangeapi.service.exception.exchange.ExchangeNotFoundException;
 import com.makeitvsolo.exchangeapi.service.exception.validation.InvalidPayloadException;
-import com.makeitvsolo.exchangeapi.servlet.error.ErrorMessage;
-import com.makeitvsolo.exchangeapi.servlet.validation.ValidatedNumber;
+import com.makeitvsolo.exchangeapi.servlet.exception.ParsePayloadException;
+import com.makeitvsolo.exchangeapi.servlet.exception.ParseQueryException;
+import com.makeitvsolo.exchangeapi.servlet.message.ErrorMessage;
+import com.makeitvsolo.exchangeapi.servlet.query.ParsePayload;
+import com.makeitvsolo.exchangeapi.servlet.query.ParseQuery;
+import com.makeitvsolo.exchangeapi.servlet.query.exchange.ParseExchangeCode;
+import com.makeitvsolo.exchangeapi.servlet.query.exchange.ParseExchangeRate;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -17,10 +23,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 
-@WebServlet(name = "exchange rate", urlPatterns = "/exchange/*")
+@WebServlet(name = "exchange", urlPatterns = "/exchanges/*")
 public final class ExchangeServlet extends HttpServlet {
-    private ExchangeService service;
+    private final ExchangeService service = ApplicationConfig.Services.Exchange.configured();
+    private final ParseQuery<ExchangeCodeDto> query = new ParseExchangeCode();
+    private final ParsePayload<BigDecimal> payload = new ParseExchangeRate();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
@@ -37,12 +46,11 @@ public final class ExchangeServlet extends HttpServlet {
         try {
             resp.setStatus(HttpServletResponse.SC_OK);
 
-            var path = req.getPathInfo().replaceAll("/", "");
-
-            var payload = new ExchangeCodeDto(path.substring(0, 3), path.substring(3));
+            var payload = query.parse(req.getPathInfo().replaceAll("/", ""));
             var exchange = service.byCode(payload);
+
             objectMapper.writeValue(resp.getWriter(), exchange);
-        } catch (InvalidPayloadException | InvalidCurrencyCodeException e) {
+        } catch (ParseQueryException| InvalidPayloadException | InvalidCurrencyCodeException e) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 
             var message = new ErrorMessage(e.getMessage());
@@ -55,7 +63,7 @@ public final class ExchangeServlet extends HttpServlet {
         } catch (Exception e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
-            var message = new ErrorMessage(e.getMessage());
+            var message = new ErrorMessage("Internal server error");
             objectMapper.writeValue(resp.getWriter(), message);
         }
     }
@@ -64,17 +72,18 @@ public final class ExchangeServlet extends HttpServlet {
         try {
             resp.setStatus(HttpServletResponse.SC_OK);
 
-            var path = req.getPathInfo().replaceAll("/", "");
-            var rate = new ValidatedNumber(
-                    req.getReader()
-                            .readLine()
-                            .replace("rate=", "")
-            );
+            var code = query.parse(req.getPathInfo().replaceAll("/", ""));
+            var rate = payload.parseFrom(req.getReader());
 
-            var payload = new UpdateExchangeDto(path.substring(0, 3), path.substring(3), rate.validated());
-            var exchange = service.update(payload);
+            var exchange = service.update(new UpdateExchangeDto(code.base(), code.target(), rate));
             objectMapper.writeValue(resp.getWriter(), exchange);
-        } catch (InvalidPayloadException | InvalidCurrencyCodeException | WrongExchangeException e) {
+        } catch (
+                ParsePayloadException |
+                ParseQueryException |
+                InvalidPayloadException |
+                InvalidCurrencyCodeException |
+                WrongExchangeException e
+        ) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 
             var message = new ErrorMessage(e.getMessage());
@@ -87,7 +96,7 @@ public final class ExchangeServlet extends HttpServlet {
         } catch (Exception e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
-            var message = new ErrorMessage(e.getMessage());
+            var message = new ErrorMessage("Internal server error");
             objectMapper.writeValue(resp.getWriter(), message);
         }
     }
