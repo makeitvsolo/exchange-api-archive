@@ -80,12 +80,12 @@ public sealed interface Exchange {
                 return true;
             }
 
-            if (!(obj instanceof Base other)) {
+            if (!(obj instanceof Exchange other)) {
                 return false;
             }
 
-            return base.equals(other.base)
-                    && target.equals(other.target);
+            return base.equals(other.base())
+                    && target.equals(other.target());
         }
 
         @Override
