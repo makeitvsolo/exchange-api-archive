@@ -10,8 +10,8 @@ import java.util.UUID;
 
 @DisplayName("ReverseExchange")
 public class ReverseExchangeTests {
-    private Currency usd = Currency.from(UUID.randomUUID(), "USD", "United States Dollar", "$");
-    private Currency cad = Currency.from(UUID.randomUUID(), "CAD", "Canadian Dollar", "C$");
+    private Currency usd = Currency.from("USD", "United States Dollar", "$");
+    private Currency cad = Currency.from("CAD", "Canadian Dollar", "C$");
 
     @Test
     @DisplayName("converts amount by reversed rate")

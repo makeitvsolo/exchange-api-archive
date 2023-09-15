@@ -11,8 +11,8 @@ import java.util.UUID;
 @DisplayName("Exchange")
 public class ExchangeTests {
     private Exchange exchange;
-    private Currency usd = Currency.from(UUID.randomUUID(), "USD", "United States Dollar", "$");
-    private Currency cad = Currency.from(UUID.randomUUID(), "CAD", "Canadian Dollar", "C$");
+    private Currency usd = Currency.from("USD", "United States Dollar", "$");
+    private Currency cad = Currency.from("CAD", "Canadian Dollar", "C$");
 
     @Test
     @DisplayName("can be between different currencies")

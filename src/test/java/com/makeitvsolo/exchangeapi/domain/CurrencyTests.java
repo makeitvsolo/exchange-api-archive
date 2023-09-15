@@ -17,7 +17,7 @@ public class CurrencyTests {
 
         Assertions.assertThrows(
                 InvalidCurrencyCodeException.class,
-                () -> Currency.from(UUID.randomUUID(), wrongCode, "Wrong Currency", "Wrong Sing")
+                () -> Currency.from(wrongCode, "Wrong Currency", "Wrong Sing")
         );
     }
 }

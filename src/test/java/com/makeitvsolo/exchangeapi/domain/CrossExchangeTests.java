@@ -12,10 +12,10 @@ import java.util.UUID;
 @DisplayName("CrossExchange")
 public class CrossExchangeTests {
     private Exchange exchange;
-    private Currency usd = Currency.from(UUID.randomUUID(), "USD", "United States Dollar", "$");
-    private Currency cad = Currency.from(UUID.randomUUID(), "CAD", "Canadian Dollar", "C$");
-    private Currency jpy = Currency.from(UUID.randomUUID(), "JPY", "Japanese Yen", "¥");
-    private Currency amd = Currency.from(UUID.randomUUID(), "AMD", "Armenian Dram", "֏");
+    private Currency usd = Currency.from("USD", "United States Dollar", "$");
+    private Currency cad = Currency.from("CAD", "Canadian Dollar", "C$");
+    private Currency jpy = Currency.from("JPY", "Japanese Yen", "¥");
+    private Currency amd = Currency.from("AMD", "Armenian Dram", "֏");
 
     @Test
     @DisplayName("possible if bases of both exchanges are equal")
