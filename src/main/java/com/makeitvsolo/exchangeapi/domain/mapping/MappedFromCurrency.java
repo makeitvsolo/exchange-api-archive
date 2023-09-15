@@ -6,5 +6,5 @@ import java.util.UUID;
 
 public interface MappedFromCurrency<R> extends Mapper {
 
-    R from(UUID id, String code, String fullName, String sign);
+    R from(String code, String fullName, String sign);
 }
