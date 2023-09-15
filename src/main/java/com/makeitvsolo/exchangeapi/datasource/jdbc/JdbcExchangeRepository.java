@@ -34,101 +34,95 @@ public final class JdbcExchangeRepository implements ExchangeRepository {
 
     private static class Query {
         static final String Insert = """
-                INSERT into exchanges (base_currency_id, target_currency_id, rate)
+                INSERT into exchanges (base_currency_code, target_currency_code, rate)
                 VALUES (?, ?, ?)
                 """;
 
         static final String Update = """
                 UPDATE exchanges
                 SET rate = ?
-                WHERE base_currency_id = ? AND target_currency_id = ?
+                WHERE base_currency_code = ? AND target_currency_code = ?
                 """;
 
         static final String FetchByCode = """
                 SELECT
-                    bases.id AS base_id
-                    bases.code AS base_code
-                    bases.full_name AS base_full_name
-                    bases.sign AS base_sign
-                    targets.id AS target_id
-                    targets.code AS target_code
-                    targets.full_name AS target_full_name
-                    targets.sign AS target_sign
-                    exchanges.rate AS exchange_rate
-                FROM exchanges
+                    b.code AS base_code,
+                    b.full_name AS base_full_name,
+                    b.sign AS base_sign,
+                    t.code AS target_code,
+                    t.full_name AS target_full_name,
+                    t.sign AS target_sign,
+                    e.rate AS exchange_rate
+                FROM exchanges e
                 INNER JOIN (
                     SELECT id, code, full_name, sign
                     FROM currencies
                     WHERE code = ?
-                ) bases ON exchange.base_currency_id = bases.id
+                ) b ON e.base_currency_code = b.code
                 INNER JOIN (
                     SELECT id, code, full_name, sign
                     FROM currencies
                     WHERE code = ?
-                ) targets ON exchange.target_currency_id = targets.id
+                ) t ON e.target_currency_code = t.code
                 """;
 
         static final String FetchAll = """
                 SELECT
-                    bases.id AS base_id
-                    bases.code AS base_code
-                    bases.full_name AS base_full_name
-                    bases.sign AS base_sign
-                    targets.id AS target_id
-                    targets.code AS target_code
-                    targets.full_name AS target_full_name
-                    targets.sign AS target_sign
-                    exchanges.rate AS exchange_rate
-                FROM exchanges
-                INNER JOIN currencies bases ON exchanges.base_currency_id = bases.id
-                INNER JOIN currencies targets ON exchanges.target_currency_id = targets.id
+                    b.code AS base_code,
+                    b.full_name AS base_full_name,
+                    b.sign AS base_sign,
+                    t.code AS target_code,
+                    t.full_name AS target_full_name,
+                    t.sign AS target_sign,
+                    e.rate AS exchange_rate
+                FROM exchanges e
+                INNER JOIN currencies b ON e.base_currency_code = b.code
+                INNER JOIN currencies t ON e.target_currency_code = t.code
                 """;
 
         static final String FetchAnyCrossPair = """
                 SELECT
-                    bases.id AS base_id
-                    bases.code AS base_code
-                    bases.full_name AS base_full_name
-                    bases.sign AS base_sign
-                    targets.id AS target_id
-                    targets.code AS target_code
-                    targets.full_name AS target_full_name
-                    targets.sign AS target_sign
-                    cross_exchanges.rate AS exchange_rate
+                    b.code AS base_code,
+                    b.full_name AS base_full_name,
+                    b.sign AS base_sign,
+                    t.code AS target_code,
+                    t.full_name AS target_full_name,
+                    t.sign AS target_sign,
+                    c.rate AS exchange_rate
                 FROM (
-                    SELECT base_currency_id, target_currency_id, rate
+                    SELECT base_currency_code, target_currency_code, rate
                     FROM (
-                        SELECT base_currency_id, target_currency_id, rate
+                        SELECT base_currency_code, target_currency_code, rate
                         FROM exchanges
-                        WHERE base_currency_id in (
-                            SELECT base_currency_id
+                        WHERE base_currency_code in (
+                            SELECT base_currency_code
                             FROM exchanges
-                            WHERE target_currency_id = ?
+                            WHERE target_currency_code = ?
                             INTERSECT
-                            SELECT base_currency_id
+                            SELECT base_currency_code
                             FROM exchanges
-                            WHERE target_currency_id = ?
+                            WHERE target_currency_code = ?
                             LIMIT 1
                         )
                         UNION
-                        SELECT base_currency_id, target_currency_id, rate
+                        SELECT base_currency_code, target_currency_code, rate
                         FROM exchanges
-                        WHERE target_currency_id in (
-                            SELECT target_currency_id
+                        WHERE target_currency_code in (
+                            SELECT target_currency_code
                             FROM exchanges
-                            WHERE base_currency_id = ?
+                            WHERE base_currency_code = ?
                             INTERSECT
-                            SELECT target_currency_id
+                            SELECT target_currency_code
                             FROM exchanges
-                            WHERE base_currency_id = ?
+                            WHERE base_currency_code = ?
                             LIMIT 1
                         )
-                    ) all_cross_exchanges
-                    ORDER BY base_currency_id, target_currency_id
+                    ) a
+                    ORDER BY base_currency_code, base_currency_code
                     LIMIT 2
-                ) cross_exchanges
-                INNER JOIN currencies bases ON exchanges.base_currency_id = bases.id
-                INNER JOIN currencies targets ON exchanges.target_currency_id = targets.id
+                ) c
+                INNER JOIN currencies b ON c.base_currency_code = b.code
+                INNER JOIN currencies t ON c.target_currency_code = t.code
                 """;
     }
 
@@ -141,8 +135,8 @@ public final class JdbcExchangeRepository implements ExchangeRepository {
             connection.setAutoCommit(false);
 
             var params = exchange.map(insertParams);
-            statement.setString(1, params.baseId());
-            statement.setString(2, params.targetId());
+            statement.setString(1, params.baseCode());
+            statement.setString(2, params.targetCode());
             statement.setBigDecimal(3, params.rate());
 
             statement.execute();
@@ -163,8 +157,8 @@ public final class JdbcExchangeRepository implements ExchangeRepository {
 
             var params = exchange.map(updateParams);
             statement.setBigDecimal(1, params.rate());
-            statement.setString(2, params.baseId());
-            statement.setString(3, params.targetId());
+            statement.setString(2, params.baseCode());
+            statement.setString(3, params.targetCode());
 
             statement.execute();
 
@@ -243,14 +237,12 @@ public final class JdbcExchangeRepository implements ExchangeRepository {
     private Exchange nextFrom(ResultSet cursor) throws SQLException {
         return Exchange.from(
                 Currency.from(
-                        UUID.fromString(cursor.getString("base_id")),
                         cursor.getString("base_code"),
                         cursor.getString("base_full_name"),
                         cursor.getString("base_sign")
                 ),
 
                 Currency.from(
-                        UUID.fromString(cursor.getString("target_id")),
                         cursor.getString("target_code"),
                         cursor.getString("target_full_name"),
                         cursor.getString("target_sign")

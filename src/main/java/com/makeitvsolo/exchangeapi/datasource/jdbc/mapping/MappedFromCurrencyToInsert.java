@@ -11,7 +11,7 @@ public final class MappedFromCurrencyToInsert implements MappedFromCurrency<Inse
     }
 
     @Override
-    public InsertCurrencyParameters from(UUID id, String code, String fullName, String sign) {
-        return new InsertCurrencyParameters(id.toString(), code, fullName, sign);
+    public InsertCurrencyParameters from(String code, String fullName, String sign) {
+        return new InsertCurrencyParameters(code, fullName, sign);
     }
 }

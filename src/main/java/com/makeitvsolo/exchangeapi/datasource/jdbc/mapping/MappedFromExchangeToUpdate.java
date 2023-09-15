@@ -9,14 +9,14 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public final class MappedFromExchangeToUpdate implements MappedFromExchange<UpdateExchangeParameters> {
-    private final MappedFromCurrency<UUID> mapper;
+    private final MappedFromCurrency<String> mapper;
 
-    public MappedFromExchangeToUpdate(MappedFromCurrency<UUID> mapper) {
+    public MappedFromExchangeToUpdate(MappedFromCurrency<String> mapper) {
         this.mapper = mapper;
     }
 
     @Override
     public UpdateExchangeParameters from(Currency base, Currency target, BigDecimal rate) {
-        return new UpdateExchangeParameters(base.map(mapper).toString(), target.map(mapper).toString(), rate);
+        return new UpdateExchangeParameters(base.map(mapper), target.map(mapper), rate);
     }
 }

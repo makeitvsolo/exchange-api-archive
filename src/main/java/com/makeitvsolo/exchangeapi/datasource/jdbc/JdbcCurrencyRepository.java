@@ -12,7 +12,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 public final class JdbcCurrencyRepository implements CurrencyRepository {
     private final DataSource source;
@@ -25,17 +24,17 @@ public final class JdbcCurrencyRepository implements CurrencyRepository {
 
     private static class Query {
         static final String Insert = """
-                INSERT into currencies (id, code, full_name, sign)
-                VALUES (?, ?, ?, ?)
+                INSERT into currencies (code, full_name, sign)
+                VALUES (?, ?, ?)
                 """;
 
         static final String FetchAll = """
-                SELECT id, code, full_name, sign
+                SELECT code, full_name, sign
                 FROM currencies
                 """;
 
         static final String FetchByCode = """
-                SELECT id, code, full_name, sign
+                SELECT code, full_name, sign
                 FROM currencies
                 WHERE code = ?
                 """;
@@ -50,10 +49,9 @@ public final class JdbcCurrencyRepository implements CurrencyRepository {
             connection.setAutoCommit(false);
 
             var params = currency.map(insertParams);
-            statement.setString(1, params.id());
-            statement.setString(2, params.code());
-            statement.setString(3, params.fullName());
-            statement.setString(4, params.sign());
+            statement.setString(1, params.code());
+            statement.setString(2, params.fullName());
+            statement.setString(3, params.sign());
 
             statement.execute();
 
@@ -75,7 +73,6 @@ public final class JdbcCurrencyRepository implements CurrencyRepository {
             List<Currency> currencies = new ArrayList<>();
             while (cursor.next()) {
                 currencies.add(Currency.from(
-                        UUID.fromString(cursor.getString("id")),
                         cursor.getString("code"),
                         cursor.getString("full_name"),
                         cursor.getString("sign")
@@ -111,7 +108,6 @@ public final class JdbcCurrencyRepository implements CurrencyRepository {
 
     private Currency nextFrom(ResultSet cursor) throws SQLException {
         return Currency.from(
-                UUID.fromString(cursor.getString("id")),
                 cursor.getString("code"),
                 cursor.getString("full_name"),
                 cursor.getString("sign")
