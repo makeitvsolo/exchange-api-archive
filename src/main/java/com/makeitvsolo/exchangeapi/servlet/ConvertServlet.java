@@ -10,9 +10,6 @@ import com.makeitvsolo.exchangeapi.service.exception.validation.InvalidPayloadEx
 import com.makeitvsolo.exchangeapi.servlet.exception.ParseQueryException;
 import com.makeitvsolo.exchangeapi.servlet.message.ErrorMessage;
 import com.makeitvsolo.exchangeapi.servlet.query.ParseQuery;
-import com.makeitvsolo.exchangeapi.servlet.query.convert.ParseAmount;
-import com.makeitvsolo.exchangeapi.servlet.query.convert.ParseConvertQuery;
-import com.makeitvsolo.exchangeapi.servlet.query.currency.ParseCurrencyCode;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -24,7 +21,7 @@ import java.io.IOException;
 @WebServlet(name = "convert", urlPatterns = "/convert")
 public final class ConvertServlet extends HttpServlet {
     private final ConvertService service = ApplicationConfig.Services.Convert.configured();
-    private final ParseQuery<ConvertAmountDto> query = new ParseConvertQuery(new ParseCurrencyCode(), new ParseAmount());
+    private final ParseQuery<ConvertAmountDto> query = ApplicationConfig.Parsers.Query.ToConvertAmount.configured();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override

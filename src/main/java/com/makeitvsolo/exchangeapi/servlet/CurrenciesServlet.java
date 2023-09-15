@@ -10,7 +10,6 @@ import com.makeitvsolo.exchangeapi.service.exception.validation.InvalidPayloadEx
 import com.makeitvsolo.exchangeapi.servlet.exception.ParsePayloadException;
 import com.makeitvsolo.exchangeapi.servlet.message.ErrorMessage;
 import com.makeitvsolo.exchangeapi.servlet.query.ParsePayload;
-import com.makeitvsolo.exchangeapi.servlet.query.currency.ParseCreateCurrency;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -22,7 +21,7 @@ import java.io.IOException;
 @WebServlet(name = "currencies", urlPatterns = "/currencies")
 public final class CurrenciesServlet extends HttpServlet {
     private final CurrencyService service = ApplicationConfig.Services.Currency.configured();
-    private final ParsePayload<CreateCurrencyDto> payload = new ParseCreateCurrency();
+    private final ParsePayload<CreateCurrencyDto> payload = ApplicationConfig.Parsers.Payload.ToCreateCurrency.configured();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override

@@ -12,8 +12,6 @@ import com.makeitvsolo.exchangeapi.service.exception.validation.InvalidPayloadEx
 import com.makeitvsolo.exchangeapi.servlet.exception.ParsePayloadException;
 import com.makeitvsolo.exchangeapi.servlet.message.ErrorMessage;
 import com.makeitvsolo.exchangeapi.servlet.query.ParsePayload;
-import com.makeitvsolo.exchangeapi.servlet.query.exchange.ParseCreateExchange;
-import com.makeitvsolo.exchangeapi.servlet.query.exchange.ParseExchangeRate;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -25,7 +23,7 @@ import java.io.IOException;
 @WebServlet(name = "exchanges", urlPatterns = "/exchanges")
 public final class ExchangesServlet extends HttpServlet {
     private final ExchangeService service = ApplicationConfig.Services.Exchange.configured();
-    private final ParsePayload<CreateExchangeDto> payload = new ParseCreateExchange();
+    private final ParsePayload<CreateExchangeDto> payload = ApplicationConfig.Parsers.Payload.ToCreateExchange.configured();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override

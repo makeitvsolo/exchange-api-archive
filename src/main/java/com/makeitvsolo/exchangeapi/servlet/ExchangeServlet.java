@@ -14,8 +14,6 @@ import com.makeitvsolo.exchangeapi.servlet.exception.ParseQueryException;
 import com.makeitvsolo.exchangeapi.servlet.message.ErrorMessage;
 import com.makeitvsolo.exchangeapi.servlet.query.ParsePayload;
 import com.makeitvsolo.exchangeapi.servlet.query.ParseQuery;
-import com.makeitvsolo.exchangeapi.servlet.query.exchange.ParseExchangeCode;
-import com.makeitvsolo.exchangeapi.servlet.query.exchange.ParseExchangeRate;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -28,8 +26,8 @@ import java.math.BigDecimal;
 @WebServlet(name = "exchange", urlPatterns = "/exchanges/*")
 public final class ExchangeServlet extends HttpServlet {
     private final ExchangeService service = ApplicationConfig.Services.Exchange.configured();
-    private final ParseQuery<ExchangeCodeDto> query = new ParseExchangeCode();
-    private final ParsePayload<BigDecimal> payload = new ParseExchangeRate();
+    private final ParseQuery<ExchangeCodeDto> query = ApplicationConfig.Parsers.Query.ToExchange.configured();
+    private final ParsePayload<BigDecimal> payload = ApplicationConfig.Parsers.Payload.ToExchangeRate.configured();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override

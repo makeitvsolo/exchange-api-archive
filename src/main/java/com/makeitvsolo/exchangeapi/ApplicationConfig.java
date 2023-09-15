@@ -16,7 +16,11 @@ import com.makeitvsolo.exchangeapi.domain.mapping.MappedFromExchange;
 import com.makeitvsolo.exchangeapi.service.ConvertService;
 import com.makeitvsolo.exchangeapi.service.CurrencyService;
 import com.makeitvsolo.exchangeapi.service.ExchangeService;
+import com.makeitvsolo.exchangeapi.service.dto.convert.ConvertAmountDto;
+import com.makeitvsolo.exchangeapi.service.dto.currency.CreateCurrencyDto;
 import com.makeitvsolo.exchangeapi.service.dto.currency.CurrencyDto;
+import com.makeitvsolo.exchangeapi.service.dto.exchange.CreateExchangeDto;
+import com.makeitvsolo.exchangeapi.service.dto.exchange.ExchangeCodeDto;
 import com.makeitvsolo.exchangeapi.service.dto.exchange.ExchangeDto;
 import com.makeitvsolo.exchangeapi.service.impl.BaseConvertService;
 import com.makeitvsolo.exchangeapi.service.impl.BaseCurrencyService;
@@ -26,10 +30,20 @@ import com.makeitvsolo.exchangeapi.service.mapping.MappedFromExchangeToDto;
 import com.makeitvsolo.exchangeapi.service.validation.WithValidationConvertService;
 import com.makeitvsolo.exchangeapi.service.validation.WithValidationCurrencyService;
 import com.makeitvsolo.exchangeapi.service.validation.WithValidationExchangeService;
+import com.makeitvsolo.exchangeapi.servlet.query.ParsePayload;
+import com.makeitvsolo.exchangeapi.servlet.query.ParseQuery;
+import com.makeitvsolo.exchangeapi.servlet.query.convert.ParseAmount;
+import com.makeitvsolo.exchangeapi.servlet.query.convert.ParseConvertQuery;
+import com.makeitvsolo.exchangeapi.servlet.query.currency.ParseCreateCurrency;
+import com.makeitvsolo.exchangeapi.servlet.query.currency.ParseCurrencyCode;
+import com.makeitvsolo.exchangeapi.servlet.query.exchange.ParseCreateExchange;
+import com.makeitvsolo.exchangeapi.servlet.query.exchange.ParseExchangeCode;
+import com.makeitvsolo.exchangeapi.servlet.query.exchange.ParseExchangeRate;
 import org.postgresql.ds.PGSimpleDataSource;
 
 import javax.sql.DataSource;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Properties;
 
 public interface ApplicationConfig {
@@ -179,6 +193,67 @@ public interface ApplicationConfig {
 
                 public static MappedFromExchange<UpdateExchangeParameters> configured() {
                     return new MappedFromExchangeToUpdate(ApplicationConfig.Mappers.FromCurrency.ToId.configured());
+                }
+            }
+        }
+    }
+
+    interface Parsers {
+
+        interface Query {
+
+            final class ToConvertAmount {
+
+                public static ParseQuery<ConvertAmountDto> configured() {
+                    return new ParseConvertQuery(
+                            Parsers.Query.ToCurrencyCode.configured(),
+                            Parsers.Query.ToAmount.configured()
+                    );
+                }
+            }
+
+            final class ToCurrencyCode {
+
+                public static ParseQuery<String> configured() {
+                    return new ParseCurrencyCode();
+                }
+            }
+
+            final class ToAmount {
+
+                public static ParseQuery<BigDecimal> configured() {
+                    return new ParseAmount();
+                }
+            }
+
+            final class ToExchange {
+
+                public static ParseQuery<ExchangeCodeDto> configured() {
+                    return new ParseExchangeCode();
+                }
+            }
+        }
+
+        interface Payload {
+
+            final class ToCreateCurrency {
+
+                public static ParsePayload<CreateCurrencyDto> configured() {
+                    return new ParseCreateCurrency();
+                }
+            }
+
+            final class ToCreateExchange {
+
+                public static  ParsePayload<CreateExchangeDto> configured() {
+                    return new ParseCreateExchange();
+                }
+            }
+
+            final class ToExchangeRate {
+
+                public static ParsePayload<BigDecimal> configured() {
+                    return new ParseExchangeRate();
                 }
             }
         }
